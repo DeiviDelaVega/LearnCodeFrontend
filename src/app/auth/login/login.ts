@@ -45,14 +45,19 @@ handleLogin(response: any) {
     }
     return res.json();
   })
-  .then(() => {
+  .then((user: any) => {
 
     localStorage.setItem('google_token', token);
     localStorage.setItem('user_name', payload.given_name); 
     localStorage.setItem('user_fullname', payload.name); 
-    localStorage.setItem('user_photo', payload.picture);   
+    localStorage.setItem('user_photo', payload.picture);
+    localStorage.setItem('role', user.role || 'USER');   
 
-    this.router.navigate(['/home'], { replaceUrl: true });
+    if (user.role === 'ADMIN') {
+      this.router.navigate(['/admin/dashboard'], { replaceUrl: true });
+    } else {
+      this.router.navigate(['/home'], { replaceUrl: true });
+    }
   })
   .catch(err => {
     console.error('LOGIN ERROR:', err);
