@@ -1,1 +1,141 @@
-<p>listado-cliente works!</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Gestión de Estudiantes</h1>
+    <p class="text-slate-600 dark:text-slate-400 mt-1">
+        Revisa y gestiona la información esencial de los estudiantes registrados.
+    </p>
+</div>
+
+<div class="glass-card rounded-xl overflow-hidden shadow-2xl bg-white/90 dark:bg-slate-900/70">
+    <div
+        class="p-6 border-b border-slate-200 dark:border-white/10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div class="flex flex-wrap items-center gap-3">
+
+            <div class="relative w-full sm:w-72">
+                <span
+                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-lg">search</span>
+                <input type="text" [(ngModel)]="search" placeholder="Buscar por nombre o email..." class="w-full bg-white dark:bg-slate-800/60 border border-slate-300 dark:border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm text-slate-900 dark:text-slate-200
+                 focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
+            </div>
+
+            <div class="relative">
+                <span
+                    class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm pointer-events-none">Estado:</span>
+                <select [(ngModel)]="status"
+                    class="pl-20 pr-8 py-2.5 bg-white dark:bg-slate-800/60 border border-slate-300 dark:border-white/10 rounded-lg text-sm font-medium text-slate-900 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all cursor-pointer">
+                    <option value="ALL">Todos</option>
+                    <option value="ACTIVE">Activo</option>
+                    <option value="BLOCKED">Bloqueado</option>
+                </select>
+            </div>
+
+            <button type="button" (click)="aplicarFiltros(search)"
+                class="flex items-center justify-center p-2.5 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg border border-cyan-500 transition-all">
+                <span class="material-symbols-outlined text-lg">search</span>
+            </button>
+
+            <button type="button" (click)="resetFiltros()"
+                class="flex items-center justify-center p-2.5 bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-white/10 rounded-lg text-slate-900 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700/50 transition-all">
+                <span class="material-symbols-outlined text-lg">restart_alt</span>
+            </button>
+
+        </div>
+    </div>
+
+    <div class="overflow-x-auto max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <table class="w-full text-left border-collapse bg-white dark:bg-slate-800/60 rounded-lg shadow-md">
+            <thead>
+                <tr
+                    class="bg-slate-100 dark:bg-slate-700/50 text-slate-900 dark:text-slate-200 text-xs font-semibold uppercase tracking-wider rounded-t-lg">
+                    <th class="px-6 py-4 border-b border-slate-300 dark:border-white/10">Estudiante</th>
+                    <th class="px-6 py-4 border-b border-slate-300 dark:border-white/10">Email</th>
+                    <th class="px-6 py-4 border-b border-slate-300 dark:border-white/10">Estado</th>
+                    <th class="px-6 py-4 border-b border-slate-300 dark:border-white/10 text-right">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-white/10">
+                <tr *ngFor="let c of clientes" class="hover:bg-slate-200/40 dark:hover:bg-slate-700/50 transition-all">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 rounded-full overflow-hidden border-2 border-slate-300 dark:border-slate-700 flex-shrink-0">
+                                <img *ngIf="c.photo; else defaultPhoto" [src]="c.photo" alt="{{ c.fullName }}"
+                                    class="w-full h-full object-cover">
+                                <ng-template #defaultPhoto>
+                                    <span
+                                        class="material-symbols-outlined text-slate-500 dark:text-slate-300 flex items-center justify-center w-full h-full">person</span>
+                                </ng-template>
+                            </div>
+
+                            <div class="flex flex-col">
+                                <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ c.fullName }}</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400">ID: {{ c.id }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-slate-700 dark:text-slate-300">{{ c.email }}</td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-bold" [ngClass]="{
+                            'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300': c.status === 'ACTIVE',
+                            'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300': c.status === 'BLOCKED'
+                        }">
+                            {{ c.status === 'ACTIVE' ? 'ACTIVO' : (c.status === 'BLOCKED' ? 'BLOQUEADO' : c.status) }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <a [routerLink]="['/admin/gestionCliente/editar', c.email]" class="inline-flex items-center gap-1 text-xs rounded
+                            bg-cyan-100 text-cyan-800 dark:bg-cyan-800/40 dark:text-cyan-200
+                            hover:bg-cyan-500 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-white
+                            px-2 py-1">
+                            <span class="material-symbols-outlined text-[12px]">edit</span>
+                            <span>Editar</span>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="p-6 border-t border-slate-200 dark:border-white/10 flex items-center justify-end">
+        <nav *ngIf="totalPages > 1" class="flex flex-wrap items-center gap-2 justify-center mt-4">
+            <button (click)="cambiarPagina(0)" [disabled]="page === 0" class="flex items-center gap-1 px-3 h-9 rounded-lg border transition-colors disabled:opacity-50
+               bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-200
+               hover:bg-cyan-500 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-white">
+                <span class="material-symbols-outlined text-lg">first_page</span>
+                <span class="text-xs font-medium hidden sm:inline">Primero</span>
+            </button>
+
+            <button (click)="cambiarPagina(page - 1)" [disabled]="page === 0" class="flex items-center gap-1 px-3 h-9 rounded-lg border transition-colors disabled:opacity-50
+               bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-200
+               hover:bg-cyan-500 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-white">
+                <span class="material-symbols-outlined text-lg">chevron_left</span>
+                <span class="text-xs font-medium hidden sm:inline">Anterior</span>
+            </button>
+
+            <div class="flex gap-1">
+                <button *ngFor="let _ of [].constructor(totalPages); let i = index" (click)="cambiarPagina(i)" class="size-9 px-3 h-9 rounded-lg text-sm font-medium transition-colors border border-transparent
+                hover:bg-cyan-500 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-white" [ngClass]="{
+                  'bg-cyan-500 text-white shadow-lg': i === page,
+                  'bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-200': i !== page
+                }">
+                    {{ i + 1 }}
+                </button>
+            </div>
+
+            <button (click)="cambiarPagina(page + 1)" [disabled]="page + 1 >= totalPages" class="flex items-center gap-1 px-3 h-9 rounded-lg border transition-colors disabled:opacity-50
+               bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-200
+               hover:bg-cyan-500 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-white">
+                <span class="text-xs font-medium hidden sm:inline">Siguiente</span>
+                <span class="material-symbols-outlined text-lg">chevron_right</span>
+            </button>
+
+            <button (click)="cambiarPagina(totalPages - 1)" [disabled]="page + 1 >= totalPages" class="flex items-center gap-1 px-3 h-9 rounded-lg border transition-colors disabled:opacity-50
+               bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-200
+               hover:bg-cyan-500 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-white">
+                <span class="text-xs font-medium hidden sm:inline">Último</span>
+                <span class="material-symbols-outlined text-lg">last_page</span>
+            </button>
+        </nav>
+    </div>
+</div>
+<br>
+<br>
