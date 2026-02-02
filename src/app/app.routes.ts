@@ -6,6 +6,10 @@ import { DashboardComponent } from './admin/dashboard/dashboard';
 import { ListadoClienteComponent } from './admin/gestionCliente/listado-cliente/listado-cliente';
 import { EditarClienteComponent } from './admin/gestionCliente/editar-cliente/editar-cliente';
 import { HomeAdmin } from './admin/home-admin/home-admin';
+import { CursoComponent } from './client/curso/curso';
+import { ListadoComponent } from './admin/gestionCurso/listado/listado';
+import { InsertCourse } from './admin/gestionCurso/crear/InsertCourse';
+
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -25,5 +29,9 @@ export const routes: Routes = [
       { path: 'gestionCliente', component: ListadoClienteComponent },
       { path: 'gestionCliente/editar/:email', component: EditarClienteComponent }
     ]
-  }
+  },
+  { path: 'client/curso', component: CursoComponent },
+  { path: 'admin/gestionCurso/listado', component: ListadoComponent },
+  { path: 'admin/gestionCurso/crear', component: InsertCourse }
+
 ];

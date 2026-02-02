@@ -1,0 +1,109 @@
+<main class="pt-32 pb-20 px-6 max-w-7xl mx-auto">
+
+  <div class="text-center mb-16 space-y-6">
+    <div class="inline-flex items-center px-4 py-1.5 rounded-full glass border border-primary/30 text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-400 mb-2">
+      <span class="relative flex h-2 w-2 mr-3">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span>
+      </span>
+      Catálogo de Élite
+    </div>
+
+    <h1 class="text-6xl md:text-8xl font-display font-bold tracking-tight">
+      Potencia tu 
+      <span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500">
+        Futuro Digital
+      </span>
+    </h1>
+
+    <p class="max-w-2xl mx-auto text-slate-400 text-xl font-light">
+      Experiencias de aprendizaje de alto rendimiento con efectos visuales inmersivos y contenido actualizado.
+    </p>
+
+    <div class="mt-12 flex flex-col items-center gap-6">
+      <div class="flex items-center gap-4 w-full max-w-2xl">
+        <div class="flex-1 relative group">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors">
+            search
+          </span>
+          <input
+            type="text"
+            [(ngModel)]="searchTitle"
+            (keyup.enter)="search()"
+            placeholder="Buscar cursos..."
+            class="w-full pl-12 pr-4 py-4 rounded-2xl search-glass text-slate-200 placeholder:text-slate-500 outline-none transition-all"
+          />
+        </div>
+
+        <button
+          type="button"
+          (click)="toggleFilters()"
+          class="flex items-center gap-2 px-6 py-4 rounded-2xl glass border border-slate-700/50 hover:border-primary/50 text-sm font-semibold tracking-wide transition-all"
+        >
+          <span class="material-symbols-outlined text-[20px]">tune</span>
+          Filtros
+        </button>
+      </div>
+
+      <div
+        class="w-full max-w-3xl flex flex-wrap justify-center gap-3 overflow-hidden transition-all duration-300"
+        [ngClass]="showFilters ? 'filter-visible' : 'filter-hidden'"
+      >
+        <button class="px-5 py-2 rounded-full glass border border-primary/20 text-xs font-bold text-primary hover:bg-primary/10 transition-all">Backend</button>
+        <button class="px-5 py-2 rounded-full glass border border-white/10 text-xs font-bold text-slate-400 hover:text-white hover:border-white/30 transition-all">Frontend</button>
+        <button class="px-5 py-2 rounded-full glass border border-white/10 text-xs font-bold text-slate-400 hover:text-white hover:border-white/30 transition-all">Mobile</button>
+        <button class="px-5 py-2 rounded-full glass border border-white/10 text-xs font-bold text-slate-400 hover:text-white hover:border-white/30 transition-all">DevOps</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+    <div
+      *ngFor="let course of courses; let i = index"
+      class="group card-active-glow rounded-[2rem] p-10 transition-all duration-500 hover:-translate-y-3 relative overflow-hidden border"
+      [ngClass]="getGlowClassByIndex(i)"
+    >
+      <div class="flex justify-center mb-10 relative">
+        <img
+          [src]="course.coverUrl"
+          [alt]="course.title"
+          class="w-48 h-48 object-contain holographic-glow transition-transform duration-500 group-hover:scale-110"
+        />
+      </div>
+
+      <div class="text-center space-y-3">
+        <h3 class="text-2xl font-display font-bold text-white">
+          {{ course.title }}
+        </h3>
+        <p class="text-slate-400 text-sm">
+          {{ course.subtitle || 'Inst. Yuls Chambi' }}
+        </p>
+
+        <div class="flex items-center justify-center gap-4 text-slate-300 mt-6 pt-6 border-t border-white/5">
+          <div class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px] opacity-70">list_alt</span>
+            <span class="text-[11px] font-bold tracking-wide">12 Módulos</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px] opacity-70">folder_open</span>
+            <span class="text-[11px] font-bold tracking-wide">48 Archivos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="courses.length === 0" class="text-center text-slate-400 mt-20 text-lg">
+    No se encontraron cursos que coincidan con tu búsqueda.
+  </div>
+
+  <div class="flex justify-center mt-16" *ngIf="courses.length > 0">
+    <button class="neon-border-btn px-16 py-5 rounded-2xl text-xs font-bold tracking-[0.3em] uppercase flex items-center gap-4">
+      Cargar más cursos
+      <span class="material-symbols-outlined text-[22px]">
+        keyboard_double_arrow_down
+      </span>
+    </button>
+  </div>
+
+</main>
