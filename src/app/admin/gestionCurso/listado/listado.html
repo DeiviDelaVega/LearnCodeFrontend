@@ -1,0 +1,128 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+    Gestión de Cursos
+  </h1>
+  <p class="text-slate-600 dark:text-slate-400 mt-1">
+    Administra los cursos disponibles en la plataforma.
+  </p>
+</div>
+
+<div class="glass-card rounded-xl overflow-hidden shadow-2xl bg-white/90 dark:bg-slate-900/70">
+
+  <!-- FILTROS -->
+  <div class="p-6 border-b border-slate-200 dark:border-white/10 flex flex-col lg:flex-row gap-6">
+    <div class="relative w-full sm:w-72">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+        search
+      </span>
+      <input
+        type="text"
+        [(ngModel)]="search"
+        placeholder="Buscar por título..."
+        class="w-full bg-white dark:bg-slate-800/60 border border-slate-300 dark:border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+      />
+    </div>
+
+    <div class="relative">
+      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm pointer-events-none">
+        Estado:
+      </span>
+      <select
+        [(ngModel)]="published"
+        class="pl-20 pr-8 py-2.5 bg-white dark:bg-slate-800/60 border border-slate-300 dark:border-white/10 rounded-lg text-sm font-medium">
+        <option value="ALL">Todos</option>
+        <option value="true">Publicados</option>
+        <option value="false">No publicados</option>
+      </select>
+    </div>
+
+    <button type="button" (click)="aplicarFiltros()" class="p-2.5 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg">
+      <span class="material-symbols-outlined">search</span>
+    </button>
+
+    <button routerLink="/admin/gestionCurso/crear" class="ml-auto flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg">
+      <span class="material-symbols-outlined text-sm">add</span>
+      Nuevo Curso
+    </button>
+  </div>
+
+  <!-- TABLA -->
+ <div class="overflow-x-auto px-6 py-8">
+  <table class="w-full text-left border-collapse bg-white dark:bg-slate-800/60 rounded-lg shadow-md">
+    <thead>
+      <tr class="bg-slate-100 dark:bg-slate-700/50 text-xs font-semibold uppercase">
+        <th class="px-6 py-4">ID</th>
+        <th class="px-6 py-4">Icono</th>
+        <th class="px-6 py-4">Curso</th>
+        <th class="px-6 py-4">Descripción</th>
+        <th class="px-6 py-4">Publicado</th>
+        <th class="px-6 py-4">Gratis</th>
+        <th class="px-6 py-4">Código Plan</th>
+        <th class="px-6 py-4">Creado en</th>
+        <th class="px-6 py-4 text-right">Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody class="divide-y divide-slate-200 dark:divide-white/10">
+      <tr *ngFor="let c of courses" class="hover:bg-slate-200/40 dark:hover:bg-slate-700/50 transition-all">
+
+        <!-- ID -->
+        <td class="px-6 py-4 text-sm text-slate-700 dark:text-white">{{ c.id }}</td>
+
+        <!-- ICONO -->
+        <td class="px-6 py-4">
+          <img [src]="c.iconUrl" alt="icon" class="w-10 h-10 rounded-lg object-cover border"/>
+        </td>
+
+        <!-- CURSO -->
+        <td class="px-6 py-4">
+          <p class="font-semibold text-slate-900 dark:text-white">{{ c.title }}</p>
+          <p class="text-xs text-slate-500">{{ c.subtitle }}</p>
+        </td>
+
+        <!-- DESCRIPCIÓN -->
+        <td class="px-6 py-4 text-sm text-slate-700 dark:text-slate-300">{{ c.description }}</td>
+
+        <!-- PUBLICADO -->
+        <td class="px-6 py-4">
+          <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-bold"
+            [ngClass]="{'bg-emerald-100 text-emerald-700': c.isPublished, 'bg-slate-200 text-slate-700': !c.isPublished}">
+            {{ c.isPublished ? 'PUBLICADO' : 'BORRADOR' }}
+          </span>
+        </td>
+
+        <!-- GRATIS -->
+        <td class="px-6 py-4">
+          <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-bold"
+            [ngClass]="{'bg-cyan-100 text-cyan-700': c.isFree, 'bg-indigo-100 text-indigo-700': !c.isFree}">
+            {{ c.isFree ? 'GRATIS' : 'PLAN ' + c.requiredPlanCode }}
+          </span>
+        </td>
+
+        <!-- CÓDIGO PLAN -->
+        <td class="px-6 py-4 text-sm text-slate-700 dark:text-white">{{ c.requiredPlanCode }}</td>
+
+        <!-- FECHA CREACIÓN -->
+        <td class="px-6 py-4 text-sm text-slate-700 dark:text-white">{{ c.createdAt | date:'short' }}</td>
+
+        <!-- ACCIONES -->
+        <td class="px-6 py-4 text-right space-x-2">
+          <a [routerLink]="['/admin/courses/edit', c.id]"
+             class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded bg-cyan-100 text-cyan-800 hover:bg-cyan-500 hover:text-white">
+            <span class="material-symbols-outlined text-[12px]">edit</span>
+            Editar
+          </a>
+          <button (click)="delete(c.id)"
+                  class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded bg-red-100 text-red-700 hover:bg-red-500 hover:text-white">
+            <span class="material-symbols-outlined text-[12px]">delete</span>
+            Eliminar
+          </button>
+        </td>
+
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+</div>

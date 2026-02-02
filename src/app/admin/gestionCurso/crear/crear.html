@@ -1,0 +1,67 @@
+<div class="max-w-3xl mx-auto p-6 glass-card rounded-xl shadow-xl bg-white/90 dark:bg-slate-900/70">
+  <h1 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white">Crear Nuevo Curso</h1>
+
+  <form (ngSubmit)="createCourse()" #courseForm="ngForm" class="space-y-4">
+
+    <!-- Título -->
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white">Título</label>
+      <input type="text" [(ngModel)]="course.title" name="title" required
+             class="w-full border rounded-lg px-3 py-2 text-slate-900 dark:text-white bg-white dark:bg-slate-800/60" />
+    </div>
+
+    <!-- Subtítulo -->
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white">Subtítulo</label>
+      <input type="text" [(ngModel)]="course.subtitle" name="subtitle"
+             class="w-full border rounded-lg px-3 py-2 text-slate-900 dark:text-white bg-white dark:bg-slate-800/60" />
+    </div>
+
+    <!-- Descripción -->
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white">Descripción</label>
+      <textarea [(ngModel)]="course.description" name="description" rows="4"
+                class="w-full border rounded-lg px-3 py-2 text-slate-900 dark:text-white bg-white dark:bg-slate-800/60"></textarea>
+    </div>
+
+    <!-- Icon URL -->
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white">Icono (URL)</label>
+      <input type="text" [(ngModel)]="course.iconUrl" name="iconUrl"
+             class="w-full border rounded-lg px-3 py-2 text-slate-900 dark:text-white bg-white dark:bg-slate-800/60" />
+    </div>
+
+    <!-- Cover URL -->
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white">Fondo (cover_url)</label>
+      <input type="text" [(ngModel)]="course.coverUrl" name="coverUrl"
+             class="w-full border rounded-lg px-3 py-2 text-slate-900 dark:text-white bg-white dark:bg-slate-800/60" />
+    </div>
+
+    <!-- Es gratis -->
+    <div class="flex items-center gap-2">
+      <input type="checkbox" [(ngModel)]="course.isFree" name="isFree" id="isFree" />
+      <label for="isFree" class="text-sm text-slate-700 dark:text-white">Curso gratuito</label>
+    </div>
+
+    <!-- Plan requerido -->
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 dark:text-white">Código del plan requerido</label>
+      <input type="text" [(ngModel)]="course.requiredPlanCode" name="requiredPlanCode"
+             class="w-full border rounded-lg px-3 py-2 text-slate-900 dark:text-white bg-white dark:bg-slate-800/60" />
+    </div>
+
+    <!-- Publicado -->
+    <div class="flex items-center gap-2">
+      <input type="checkbox" [(ngModel)]="course.isPublished" name="isPublished" id="isPublished" />
+      <label for="isPublished" class="text-sm text-slate-700 dark:text-white">Publicar curso</label>
+    </div>
+
+    <!-- Botón crear -->
+    <button type="submit"
+            class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-semibold">
+      Crear Curso
+    </button>
+
+  </form>
+</div>
