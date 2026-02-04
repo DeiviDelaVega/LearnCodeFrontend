@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AdminCourseService } from '../../../service/AdminCourseService';
 import { AdminCourseDto } from '../../../models/AdminCourseDto';
+import { AdminCourseService } from '../../../service/AdminCourseService';
 
 @Component({
   selector: 'app-detalle',
@@ -14,34 +14,31 @@ import { AdminCourseDto } from '../../../models/AdminCourseDto';
 export class DetailCourse implements OnInit {
 
   course!: AdminCourseDto;
-  courseId!: string;
-
+  
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private courseService: AdminCourseService
+    private courseService: AdminCourseService 
   ) {}
 
-  ngOnInit(): void {
-    this.courseId = this.route.snapshot.paramMap.get('id')!;
-    console.log('🆔 ID recibido:', this.courseId);
-
-    this.loadCourse();
+   ngOnInit(): void {
+  const id = this.route.snapshot.paramMap.get('id');
+  if (!id) {
+    this.router.navigate(['/admin/gestionCurso/listado']);
+    return;
   }
 
-  loadCourse(): void {
-    this.courseService.getById(this.courseId).subscribe({
+   this.courseService.getById(id).subscribe({  
       next: (data) => {
-        console.log('📦 Curso recibido:', data);
         this.course = data;
       },
-      error: (err) => {
-        console.error(err);
-        alert('Error al cargar el curso');
+      error: () => {
+        alert('No se pudo cargar el curso');
         this.router.navigate(['/admin/gestionCurso/listado']);
       }
     });
   }
+
 
   volver(): void {
     this.router.navigate(['/admin/gestionCurso/listado']);

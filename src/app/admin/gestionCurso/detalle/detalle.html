@@ -1,86 +1,80 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <h1 class="text-4xl font-extrabold text-white mb-3">
-        Detalle del Curso
-    </h1>
-    <p class="text-slate-400">
-        Información completa del curso registrado.
-    </p>
+  <h1 class="text-4xl font-extrabold text-white mb-3">
+    Detalle del Curso
+  </h1>
+  <p class="text-slate-400">
+    Información completa del curso registrado.
+  </p>
 </div>
 
 <div *ngIf="course" class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <div class="relative rounded-[32px] p-8 bg-slate-900/40 backdrop-blur-xl
-              border border-cyan-400/20">
+  <div class="relative rounded-[32px] p-8 bg-slate-900/40 backdrop-blur-xl border border-cyan-400/20">
 
-        <div class="mb-6">
-            <label class="text-slate-400 text-sm mb-2 block">Título</label>
-            <input [value]="course.title" disabled class="w-full h-12 px-5 rounded-xl bg-slate-950/60
-               border border-slate-800 text-slate-300" />
-        </div>
+    <div class="mb-6">
+      <label class="text-slate-400 text-sm mb-2 block">Título</label>
+      <input [value]="course.title" disabled
+             class="w-full h-12 px-5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-300" />
+    </div>
 
-        <div class="mb-6">
-            <label class="text-slate-400 text-sm mb-2 block">Subtítulo</label>
-            <input [value]="course.subtitle" disabled class="w-full h-12 px-5 rounded-xl bg-slate-950/60
-               border border-slate-800 text-slate-300" />
-        </div>
+    <div class="mb-6">
+      <label class="text-slate-400 text-sm mb-2 block">Subtítulo</label>
+      <input [value]="course.subtitle" disabled
+             class="w-full h-12 px-5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-300" />
+    </div>
 
-        <div class="mb-8">
-            <label class="text-slate-400 text-sm mb-2 block">Descripción</label>
-            <textarea rows="5" disabled class="w-full px-5 py-4 rounded-xl bg-slate-950/60
-               border border-slate-800 text-slate-300">
+    <div class="mb-8">
+      <label class="text-slate-400 text-sm mb-2 block">Descripción</label>
+      <textarea rows="5" disabled
+                class="w-full px-5 py-4 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-300">
 {{ course.description }}
       </textarea>
-        </div>
-
-        <div class="mb-8">
-            <label class="text-slate-400 text-sm mb-3 block">Icono del Curso</label>
-
-            <div *ngIf="course.iconUrl" class="flex flex-col gap-2">
-                <img [src]="course.iconUrl" class="w-20 h-20 rounded-xl object-cover border border-white/10" />
-
-                <p class="text-xs text-slate-500">
-                    {{ course.iconUrl.split(',')[0] ? 'icono-cargado.png' : '' }}
-                </p>
-            </div>
-
-            <p *ngIf="!course.iconUrl" class="text-slate-500 text-sm">
-                No se cargó icono
-            </p>
-        </div>
-
-        <div class="mb-6">
-            <label class="text-slate-400 text-sm mb-2 block">Color Cover</label>
-            <div class="flex gap-3">
-                <input type="color" [value]="course.coverUrl" disabled
-                    class="w-12 h-11 rounded-xl border border-slate-800" />
-                <input [value]="course.coverUrl" disabled class="flex-1 h-11 px-4 rounded-xl bg-slate-950/60
-                 border border-slate-800 text-slate-300" />
-            </div>
-        </div>
-
-        <div class="mb-6">
-            <label class="text-slate-400 text-sm mb-2 block">¿Curso Gratis?</label>
-            <input [value]="course.isFree ? 'Sí' : 'No'" disabled class="w-full h-12 px-5 rounded-xl bg-slate-950/60
-               border border-slate-800 text-slate-300" />
-        </div>
-
-        <div class="mb-6" *ngIf="!course.isFree">
-            <label class="text-slate-400 text-sm mb-2 block">Plan requerido</label>
-            <input [value]="course.requiredPlanCode" disabled class="w-full h-12 px-5 rounded-xl bg-slate-950/60
-               border border-slate-800 text-slate-300" />
-        </div>
-
-        <div class="mb-10">
-            <label class="text-slate-400 text-sm mb-2 block">Publicado</label>
-            <input [value]="course.isPublished ? 'Sí' : 'No'" disabled class="w-full h-12 px-5 rounded-xl bg-slate-950/60
-               border border-slate-800 text-slate-300" />
-        </div>
-
-        <button (click)="volver()" class="w-full h-14 rounded-full font-bold
-             bg-slate-800 text-slate-200
-             hover:bg-slate-700 transition">
-            Volver al listado
-        </button>
-
     </div>
+
+    <div class="mb-8">
+      <label class="text-slate-400 text-sm mb-3 block">Icono del Curso</label>
+      <div *ngIf="course.iconUrl; else noIcon" class="flex flex-col gap-2">
+        <img [src]="course.iconUrl" class="w-20 h-20 rounded-xl object-cover border border-white/10" />
+        <p class="text-xs text-slate-500">
+          icono-cargado.png
+        </p>
+      </div>
+      <ng-template #noIcon>
+        <p class="text-slate-500 text-sm">No se cargó icono</p>
+      </ng-template>
+    </div>
+
+    <div class="mb-6">
+      <label class="text-slate-400 text-sm mb-2 block">Color Cover</label>
+      <div class="flex gap-3">
+        <input type="color" [value]="course.coverUrl" disabled
+               class="w-12 h-11 rounded-xl border border-slate-800" />
+        <input [value]="course.coverUrl" disabled
+               class="flex-1 h-11 px-4 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-300" />
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <label class="text-slate-400 text-sm mb-2 block">¿Curso Gratis?</label>
+      <input [value]="course.isFree ? 'Sí' : 'No'" disabled
+             class="w-full h-12 px-5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-300" />
+    </div>
+
+    <div class="mb-6" *ngIf="!course.isFree">
+      <label class="text-slate-400 text-sm mb-2 block">Plan requerido</label>
+      <input [value]="course.requiredPlanCode" disabled
+             class="w-full h-12 px-5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-300" />
+    </div>
+
+    <div class="mb-10">
+      <label class="text-slate-400 text-sm mb-2 block">Publicado</label>
+      <input [value]="course.isPublished ? 'Sí' : 'No'" disabled
+             class="w-full h-12 px-5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-300" />
+    </div>
+
+    <button (click)="volver()" class="w-full h-14 rounded-full font-bold bg-slate-800 text-slate-200 hover:bg-slate-700 transition">
+      Volver al listado
+    </button>
+
+  </div>
 </div>
