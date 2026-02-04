@@ -1,128 +1,197 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-  <h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-    Gestión de Cursos
-  </h1>
-  <p class="text-slate-600 dark:text-slate-400 mt-1">
-    Administra los cursos disponibles en la plataforma.
-  </p>
-</div>
+<main class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
-<div class="glass-card rounded-xl overflow-hidden shadow-2xl bg-white/90 dark:bg-slate-900/70">
+  <div class="mb-12">
+    <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
+      Gestión de Cursos
+    </h1>
 
-  <!-- FILTROS -->
-  <div class="p-6 border-b border-slate-200 dark:border-white/10 flex flex-col lg:flex-row gap-6">
-    <div class="relative w-full sm:w-72">
-      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-        search
-      </span>
-      <input
-        type="text"
-        [(ngModel)]="search"
-        placeholder="Buscar por título..."
-        class="w-full bg-white dark:bg-slate-800/60 border border-slate-300 dark:border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all"
-      />
-    </div>
-
-    <div class="relative">
-      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm pointer-events-none">
-        Estado:
-      </span>
-      <select
-        [(ngModel)]="published"
-        class="pl-20 pr-8 py-2.5 bg-white dark:bg-slate-800/60 border border-slate-300 dark:border-white/10 rounded-lg text-sm font-medium">
-        <option value="ALL">Todos</option>
-        <option value="true">Publicados</option>
-        <option value="false">No publicados</option>
-      </select>
-    </div>
-
-    <button type="button" (click)="aplicarFiltros()" class="p-2.5 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg">
-      <span class="material-symbols-outlined">search</span>
-    </button>
-
-    <button routerLink="/admin/gestionCurso/crear" class="ml-auto flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg">
-      <span class="material-symbols-outlined text-sm">add</span>
-      Nuevo Curso
-    </button>
+    <p class="text-slate-500 dark:text-slate-400 text-lg max-w-2xl font-light leading-relaxed">
+      Administra los cursos disponibles en la plataforma.
+    </p>
   </div>
 
-  <!-- TABLA -->
- <div class="overflow-x-auto px-6 py-8">
-  <table class="w-full text-left border-collapse bg-white dark:bg-slate-800/60 rounded-lg shadow-md">
-    <thead>
-      <tr class="bg-slate-100 dark:bg-slate-700/50 text-xs font-semibold uppercase">
-        <th class="px-6 py-4">ID</th>
-        <th class="px-6 py-4">Icono</th>
-        <th class="px-6 py-4">Curso</th>
-        <th class="px-6 py-4">Descripción</th>
-        <th class="px-6 py-4">Publicado</th>
-        <th class="px-6 py-4">Gratis</th>
-        <th class="px-6 py-4">Código Plan</th>
-        <th class="px-6 py-4">Creado en</th>
-        <th class="px-6 py-4 text-right">Acciones</th>
-      </tr>
-    </thead>
+  <div
+    class="glass-effect bg-white/30 dark:bg-slate-900/30 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800/50">
 
-    <tbody class="divide-y divide-slate-200 dark:divide-white/10">
-      <tr *ngFor="let c of courses" class="hover:bg-slate-200/40 dark:hover:bg-slate-700/50 transition-all">
+    <div class="glass-effect bg-white/40 dark:bg-slate-900/40 rounded-3xl p-4 mb-8
+         flex flex-col lg:flex-row lg:items-center lg:justify-between
+         gap-6 border border-slate-200 dark:border-slate-800/50">
 
-        <!-- ID -->
-        <td class="px-6 py-4 text-sm text-slate-700 dark:text-white">{{ c.id }}</td>
+      <div class="flex-1 min-w-[280px] relative group">
+        <span
+          class="material-icons-round absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
+          search
+        </span>
 
-        <!-- ICONO -->
-        <td class="px-6 py-4">
-          <img [src]="c.iconUrl" alt="icon" class="w-10 h-10 rounded-lg object-cover border"/>
-        </td>
+        <input type="text" [(ngModel)]="search" placeholder="Buscar por título..." class="w-full bg-white/50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800 rounded-2xl
+               py-3 pl-12 pr-4 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all
+               text-slate-700 dark:text-slate-200 outline-none" />
+      </div>
 
-        <!-- CURSO -->
-        <td class="px-6 py-4">
-          <p class="font-semibold text-slate-900 dark:text-white">{{ c.title }}</p>
-          <p class="text-xs text-slate-500">{{ c.subtitle }}</p>
-        </td>
+      <div class="relative">
+        <select [(ngModel)]="published" class="appearance-none bg-white/50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800 rounded-2xl
+               py-3 pl-6 pr-12 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all
+               text-slate-700 dark:text-slate-200 outline-none">
 
-        <!-- DESCRIPCIÓN -->
-        <td class="px-6 py-4 text-sm text-slate-700 dark:text-slate-300">{{ c.description }}</td>
+          <option value="ALL">Estado: Todos</option>
+          <option value="true">Publicados</option>
+          <option value="false">Borradores</option>
+        </select>
 
-        <!-- PUBLICADO -->
-        <td class="px-6 py-4">
-          <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-bold"
-            [ngClass]="{'bg-emerald-100 text-emerald-700': c.isPublished, 'bg-slate-200 text-slate-700': !c.isPublished}">
-            {{ c.isPublished ? 'PUBLICADO' : 'BORRADOR' }}
-          </span>
-        </td>
+        <span class="material-icons-round absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+          expand_more
+        </span>
+      </div>
 
-        <!-- GRATIS -->
-        <td class="px-6 py-4">
-          <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-bold"
-            [ngClass]="{'bg-cyan-100 text-cyan-700': c.isFree, 'bg-indigo-100 text-indigo-700': !c.isFree}">
-            {{ c.isFree ? 'GRATIS' : 'PLAN ' + c.requiredPlanCode }}
-          </span>
-        </td>
+      <button type="button" (click)="applyFilters()" class="bg-primary text-background-dark hover:shadow-[0_0_20px_rgba(0,224,255,0.4)]
+             transition-all px-6 py-3 rounded-2xl font-bold flex items-center gap-2">
+        <span class="material-icons-round text-xl">filter_list</span>
+        Filtrar
+      </button>
 
-        <!-- CÓDIGO PLAN -->
-        <td class="px-6 py-4 text-sm text-slate-700 dark:text-white">{{ c.requiredPlanCode }}</td>
+      <button type="button" (click)="resetFilters()" class="p-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700
+             rounded-2xl text-slate-600 dark:text-slate-300 transition-colors">
+        <span class="material-icons-round">refresh</span>
+      </button>
 
-        <!-- FECHA CREACIÓN -->
-        <td class="px-6 py-4 text-sm text-slate-700 dark:text-white">{{ c.createdAt | date:'short' }}</td>
+      <button routerLink="/admin/gestionCurso/crear"
+        class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all">
+        <span class="material-icons-round text-xl">add</span>
+        Nuevo Curso
+      </button>
 
-        <!-- ACCIONES -->
-        <td class="px-6 py-4 text-right space-x-2">
-          <a [routerLink]="['/admin/courses/edit', c.id]"
-             class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded bg-cyan-100 text-cyan-800 hover:bg-cyan-500 hover:text-white">
-            <span class="material-symbols-outlined text-[12px]">edit</span>
-            Editar
-          </a>
-          <button (click)="delete(c.id)"
-                  class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded bg-red-100 text-red-700 hover:bg-red-500 hover:text-white">
-            <span class="material-symbols-outlined text-[12px]">delete</span>
-            Eliminar
-          </button>
-        </td>
+    </div>
 
-      </tr>
-    </tbody>
-  </table>
-</div>
+    <div class="glass-effect bg-white/30 dark:bg-slate-900/30 rounded-3xl overflow-hidden
+            border border-slate-200 dark:border-slate-800/50">
+
+      <table class="w-full text-left border-collapse">
+
+        <thead>
+          <tr class="bg-slate-100/50 dark:bg-slate-950/50 border-b border-slate-200 dark:border-slate-800">
+
+            <th class="px-8 py-5 text-[11px] uppercase tracking-widest font-bold text-slate-400">
+              Curso
+            </th>
+
+            <th class="px-8 py-5 text-[11px] uppercase tracking-widest font-bold text-slate-400">
+              Descripción
+            </th>
+
+            <th class="px-8 py-5 text-[11px] uppercase tracking-widest font-bold text-slate-400">
+              Color
+            </th>
+
+            <th class="px-8 py-5 text-[11px] uppercase tracking-widest font-bold text-slate-400">
+              Estado
+            </th>
+
+            <th class="px-8 py-5 text-[11px] uppercase tracking-widest font-bold text-slate-400">
+              Acceso
+            </th>
+
+            <th class="px-8 py-5 text-[11px] uppercase tracking-widest font-bold text-slate-400">
+              Creado
+            </th>
+
+            <th class="px-8 py-5 text-[11px] uppercase tracking-widest font-bold text-slate-400 text-right">
+              Acciones
+            </th>
+
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800/30">
+
+          <tr *ngFor="let c of filteredCourses" class="group row-glow transition-all duration-300">
+
+            <td class="px-8 py-6">
+              <div class="flex items-center gap-4">
+
+                <div
+                  class="w-12 h-12 rounded-xl bg-slate-200 dark:bg-slate-800 overflow-hidden border border-slate-100 dark:border-slate-700">
+                  <img [src]="c.iconUrl" alt="icon" class="w-full h-full object-cover">
+                </div>
+
+                <div>
+                  <p class="font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
+                    {{ c.title }}
+                  </p>
+
+                  <p class="text-xs text-slate-500">
+                    {{ c.subtitle }}
+                  </p>
+                </div>
+
+              </div>
+            </td>
+
+            <td class="px-8 py-6 text-slate-600 dark:text-slate-300">
+              {{ c.description }}
+            </td>
+
+            <td class="px-8 py-6">
+              <div class="w-10 h-6 rounded-lg border border-slate-300 dark:border-slate-700"
+                [style.background]="c.coverUrl">
+              </div>
+
+              <p class="text-xs text-slate-500 mt-1">
+                {{ c.coverUrl }}
+              </p>
+            </td>
+
+            <td class="px-8 py-6">
+              <span class="inline-flex px-3 py-1 rounded-full text-[11px] font-bold" [ngClass]="{
+              'bg-emerald-500/15 text-emerald-400': c.isPublished,
+              'bg-slate-500/15 text-slate-400': !c.isPublished
+            }">
+                {{ c.isPublished ? 'PUBLICADO' : 'BORRADOR' }}
+              </span>
+            </td>
+
+            <td class="px-8 py-6">
+              <span class="inline-flex px-3 py-1 rounded-full text-[11px] font-bold" [ngClass]="{
+              'bg-cyan-500/15 text-cyan-400': c.isFree,
+              'bg-indigo-500/15 text-indigo-400': !c.isFree
+            }">
+
+                {{ c.isFree ? 'GRATIS' : c.requiredPlanCode }}
+
+              </span>
+            </td>
+
+            <td class="px-8 py-6 text-slate-600 dark:text-slate-300">
+              {{ c.createdAt | date:'short' }}
+            </td>
+
+            <td class="px-8 py-6 text-right">
+              <div class="flex items-center justify-end gap-3">
+
+                <a [routerLink]="['/admin/gestionCurso/detalle', c.id]" class="w-10 h-10 rounded-xl flex items-center justify-center
+         text-slate-400
+         hover:text-yellow-400 hover:bg-yellow-400/10
+         transition-all">
+                  <span class="material-icons-round text-xl">visibility</span>
+                </a>
 
 
-</div>
+                <a [routerLink]="['/admin/gestionCurso/editar', c.id]" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400
+                     hover:text-cyan-400 hover:bg-cyan-400/10 transition-all">
+                  <span class="material-icons-round text-xl">edit</span>
+                </a>
+
+                <button (click)="confirmDelete(c.id)" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400
+                     hover:text-rose-500 hover:bg-rose-500/10 transition-all">
+                  <span class="material-icons-round text-xl">delete_outline</span>
+                </button>
+
+              </div>
+            </td>
+
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
