@@ -9,6 +9,8 @@ import { HomeAdmin } from './admin/home-admin/home-admin';
 import { CursoComponent } from './client/curso/curso';
 import { ListadoComponent } from './admin/gestionCurso/listado/listado';
 import { InsertCourse } from './admin/gestionCurso/crear/InsertCourse';
+import { EditCourse } from './admin/gestionCurso/editar/EditCourse';
+import { DetailCourse } from './admin/gestionCurso/detalle/DetailCourse';
 
 
 export const routes: Routes = [
@@ -32,6 +34,8 @@ export const routes: Routes = [
   },
   { path: 'client/curso', component: CursoComponent },
   { path: 'admin/gestionCurso/listado', component: ListadoComponent },
-  { path: 'admin/gestionCurso/crear', component: InsertCourse }
+  { path: 'admin/gestionCurso/crear', component: InsertCourse },
+  { path: 'admin/gestionCurso/editar/:id',  component: EditCourse },
+  { path: 'admin/gestionCurso/detalle/:id',  component: DetailCourse}
 
 ];
