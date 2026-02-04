@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
 import { ClientCourse } from '../../models/ClientCourseDto';
 import { ClientCourseService } from '../../service/CourseService';
 
