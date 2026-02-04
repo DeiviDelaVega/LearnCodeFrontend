@@ -20,6 +20,7 @@ export const routes: Routes = [
     component: HomeComponent,
     canActivate: [authGuard]
   },
+  { path: 'client/curso', component: CursoComponent },
   {
     path: 'admin',
     component: DashboardComponent,
@@ -28,14 +29,14 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: HomeAdmin },
-      { path: 'gestionCliente', component: ListadoClienteComponent },
-      { path: 'gestionCliente/editar/:email', component: EditarClienteComponent }
-    ]
-  },
-  { path: 'client/curso', component: CursoComponent },
-  { path: 'admin/gestionCurso/listado', component: ListadoComponent },
-  { path: 'admin/gestionCurso/crear', component: InsertCourse },
-  { path: 'admin/gestionCurso/editar/:id',  component: EditCourse },
-  { path: 'admin/gestionCurso/detalle/:id',  component: DetailCourse}
 
+      { path: 'gestionCliente', component: ListadoClienteComponent },
+      { path: 'gestionCliente/editar/:email', component: EditarClienteComponent },
+
+      { path: 'gestionCurso/listado', component: ListadoComponent },
+      { path: 'gestionCurso/crear', component: InsertCourse },
+      { path: 'gestionCurso/editar/:id', component: EditCourse },
+      { path: 'gestionCurso/detalle/:id', component: DetailCourse }
+    ]
+  }
 ];
