@@ -29,6 +29,8 @@ export const routes: Routes = [
     { path: 'curso', component: CursoComponent },
 
     { path: 'plans', component: PlansComponent }
+    { path: 'curso', component: CursoComponent }
+
   ]
 },
   {
