@@ -1,0 +1,153 @@
+<main class="pt-32 pb-20 px-6 overflow-hidden relative">
+
+  <!-- Loader -->
+  <div *ngIf="loading" class="text-center py-40 text-xl font-bold">
+    Cargando planes...
+  </div>
+
+  <!-- Contenido -->
+  <div *ngIf="!loading" class="max-w-7xl mx-auto relative z-10">
+
+    <!-- Header -->
+    <div class="text-center mb-20 space-y-4">
+
+      <div
+        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full
+               bg-primary/10 border border-primary/20
+               text-primary text-sm font-semibold mb-2">
+
+        <span class="material-icons-round text-base">auto_awesome</span>
+        PLANES DISPONIBLES
+      </div>
+
+      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight">
+        Impulsa tu carrera al
+        <span class="gradient-text">siguiente nivel</span>
+      </h1>
+
+      <p class="text-slate-500 dark:text-slate-400 text-lg max-w-2xl mx-auto">
+        Elige el plan que mejor se adapte a tus objetivos.
+      </p>
+
+    </div>
+
+    <!-- Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+
+      <!-- Plan Card -->
+      <div
+        *ngFor="let plan of plans; let i = index"
+        class="glass p-8 rounded-3xl flex flex-col h-full
+               border-t-4 hover:scale-[1.02]
+               transition-transform duration-300"
+
+        [ngClass]="{
+          'border-t-amber-400/50': i === 0,
+          'border-t-primary scale-105 shadow-2xl': i === 1,
+          'border-t-cyan-400/50': i === 2
+        }"
+      >
+
+        <!-- Badge -->
+        <div *ngIf="i === 1" class="absolute top-4 right-4">
+          <span
+            class="bg-primary text-white text-[10px]
+                   font-black px-3 py-1 rounded-full">
+
+            MÁS POPULAR
+          </span>
+        </div>
+
+        <!-- Header -->
+        <div class="mb-8">
+
+          <div
+            class="w-12 h-12 rounded-2xl flex items-center
+                   justify-center mb-6"
+
+            [ngClass]="{
+              'bg-amber-400/10 text-amber-500': i === 0,
+              'bg-primary/10 text-primary': i === 1,
+              'bg-cyan-400/10 text-cyan-500': i === 2
+            }"
+          >
+            <span class="material-icons-round text-3xl">
+              {{ i === 0 ? 'workspace_premium' :
+                 i === 1 ? 'stars' : 'diamond' }}
+            </span>
+          </div>
+
+          <h3 class="text-2xl font-bold mb-2">
+            {{ plan.name }}
+          </h3>
+
+          <div class="flex items-baseline gap-1">
+
+            <span class="text-4xl font-bold">
+                 ${{ plan.price }}
+
+            </span>
+
+            <span class="text-slate-500">/mes</span>
+
+          </div>
+
+          <p class="mt-4 text-slate-500 text-sm">
+            Acceso completo a la plataforma LearnCode.
+          </p>
+
+        </div>
+
+        <!-- Features -->
+        <div class="space-y-4 flex-grow">
+
+          <div class="flex items-center gap-3">
+            <span class="material-icons-round text-emerald-500 text-xl">
+              check_circle
+            </span>
+            <span class="text-sm">
+              Acceso ilimitado a cursos
+            </span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <span class="material-icons-round text-emerald-500 text-xl">
+              check_circle
+            </span>
+            <span class="text-sm">
+              Certificados
+            </span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <span class="material-icons-round text-emerald-500 text-xl">
+              check_circle
+            </span>
+            <span class="text-sm">
+              Comunidad
+            </span>
+          </div>
+
+        </div>
+
+        <!-- Button -->
+        <button
+          (click)="buy(plan.code)"
+          class="mt-10 w-full py-4 rounded-2xl
+                 font-bold transition-all"
+
+          [ngClass]="{
+            'bg-slate-200 hover:bg-slate-300': i !== 1,
+            'bg-primary text-white shadow-lg hover:scale-[1.02]': i === 1
+          }"
+        >
+          Elegir Plan
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</main>

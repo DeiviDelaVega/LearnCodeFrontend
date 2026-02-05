@@ -12,6 +12,7 @@ import { DetailCourse } from './admin/gestionCurso/detalle/DetailCourse';
 import { DashboardClient } from './client/dashboard-client/dashboard-client';
 import { HomeClient } from './client/home-client/home-client';
 import { CursoComponent } from './client/curso/curso';
+import { PlansComponent } from './client/plans/plans';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -25,8 +26,9 @@ export const routes: Routes = [
 
     { path: 'home', component: HomeClient },
 
-    { path: 'curso', component: CursoComponent }
+    { path: 'curso', component: CursoComponent },
 
+    { path: 'plans', component: PlansComponent }
   ]
 },
   {
