@@ -56,7 +56,7 @@ handleLogin(response: any) {
     if (user.role === 'ADMIN') {
       this.router.navigate(['/admin/dashboard'], { replaceUrl: true });
     } else {
-      this.router.navigate(['/home'], { replaceUrl: true });
+     this.router.navigate(['/client/home'], { replaceUrl: true });
     }
   })
   .catch(err => {
