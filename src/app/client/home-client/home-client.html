@@ -1,0 +1,39 @@
+<main class="flex-grow flex items-center justify-center p-6">
+<div class="w-full max-w-4xl">
+<div class="glass-card p-10 md:p-16 rounded-[2.5rem] shadow-2xl text-center mb-12">
+<h1 class="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
+                   Bienvenido,
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500">
+  {{ userName }}
+</span>
+</h1>
+<p class="text-slate-500 dark:text-slate-400 text-lg max-w-md mx-auto">
+                    ¿Qué te gustaría aprender hoy? Explora las categorías más destacadas.
+                </p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="glass-card p-6 rounded-2xl hover:border-primary/50 transition-all duration-300 group cursor-pointer">
+<p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 dark:text-slate-500 mb-2 group-hover:text-primary transition-colors">Frontend</p>
+<p class="text-lg font-semibold text-slate-700 dark:text-slate-200">Web Development</p>
+</div>
+<div class="p-6 rounded-2xl bg-primary/10 border border-primary/20 ring-1 ring-primary/30 hover:ring-primary/60 transition-all duration-300 cursor-pointer">
+<p class="text-[10px] uppercase tracking-widest font-bold text-primary mb-2">Design</p>
+<p class="text-lg font-semibold text-primary">UI/UX Design</p>
+</div>
+<div class="glass-card p-6 rounded-2xl hover:border-primary/50 transition-all duration-300 group cursor-pointer">
+<p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 dark:text-slate-500 mb-2 group-hover:text-primary transition-colors">Analytics</p>
+<p class="text-lg font-semibold text-slate-700 dark:text-slate-200">Data Science</p>
+</div>
+<div class="glass-card p-6 rounded-2xl hover:border-primary/50 transition-all duration-300 group cursor-pointer">
+<p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 dark:text-slate-500 mb-2 group-hover:text-primary transition-colors">Infrastructure</p>
+<p class="text-lg font-semibold text-slate-700 dark:text-slate-200">Cloud Computing</p>
+</div>
+</div>
+</div>
+</main>
+<footer class="p-8 text-center">
+<div class="flex flex-wrap justify-center gap-6 text-sm text-slate-500 dark:text-slate-600">
+<a class="hover:text-primary transition-colors" href="#">Estado de la Plataforma</a>
+<a class="hover:text-primary transition-colors" href="#">Centro de Ayuda</a>
+<a class="hover:text-primary transition-colors" href="#">Recursos</a>
+</div>
