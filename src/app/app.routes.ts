@@ -27,8 +27,7 @@ export const routes: Routes = [
     { path: 'home', component: HomeClient },
 
     { path: 'curso', component: CursoComponent },
-
-    { path: 'plans', component: PlansComponent }
+    { path: 'plans', component: PlansComponent },
     { path: 'curso', component: CursoComponent }
 
   ]

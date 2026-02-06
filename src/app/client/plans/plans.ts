@@ -1,9 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Router, NavigationEnd } from '@angular/router';
 
 import { PlanService } from '../../service/PlanService';
 import { Plan } from '../../models/Plan';
+import { Subscription } from '../../models/Subscription';
+import { forkJoin } from 'rxjs';
+
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-plans',
@@ -14,33 +19,100 @@ import { Plan } from '../../models/Plan';
 export class PlansComponent implements OnInit {
 
   plans: Plan[] = [];
+  currentPlan: string | null = null;
 
   loading = true;
 
   constructor(
     private planService: PlanService,
-    private http: HttpClient
-  ) {}
+    private http: HttpClient,
+  ) {
+  }
 
- ngOnInit(): void {
+  ngOnInit(): void {
+    this.loadAll();
+  }
 
-  this.planService.getPlans().subscribe({
+  //  Cargar planes + subscripcion
+loadAll() {
+
+  this.loading = true;
+
+  forkJoin({
+    plans: this.planService.getPlans(),
+    sub: this.planService.getMySubscription()
+  })
+  .subscribe({
     next: res => {
 
-      console.log('PLANES BACKEND =>', res);
+      // Planes
+      this.plans = res.plans;
 
-      this.plans = res;
+      // Subscripción
+      if (res.sub?.status === 'ACTIVE') {
+        this.currentPlan = res.sub.planCode;
+      } else {
+        this.currentPlan = null;
+      }
+
       this.loading = false;
     },
     error: err => {
-      console.error('ERROR PLANES =>', err);
+
+      console.error('Error cargando datos', err);
+
       this.loading = false;
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudieron cargar los planes'
+      });
     }
   });
-
 }
 
+  // Control de seleccion
+  selectPlan(code: string) {
+
+    // Ya tiene este plan
+    if (code === this.currentPlan) return;
+
+    // Tiene otro plan
+    if (this.currentPlan) {
+
+      Swal.fire({
+        title: '¿Cambiar de plan?',
+        text: 'Se cancelará tu plan actual',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, cambiar',
+        cancelButtonText: 'Cancelar'
+      }).then(res => {
+
+        if (res.isConfirmed) {
+          this.buy(code);
+        }
+      });
+
+      return;
+    }
+
+    // Sin plan
+    this.buy(code);
+  }
+
+  // Stripe
   buy(planCode: string) {
+
+    Swal.fire({
+      title: 'Redirigiendo a Stripe...',
+      text: 'Procesando pago',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
 
     this.http.post<any>(
       'http://localhost:8080/api/stripe/checkout',
@@ -53,8 +125,18 @@ export class PlansComponent implements OnInit {
         }
       }
     )
-    .subscribe(res => {
-      window.location.href = res.url;
+    .subscribe({
+      next: res => {
+        window.location.href = res.url;
+      },
+      error: () => {
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo iniciar el pago'
+        });
+      }
     });
   }
 }
