@@ -131,18 +131,22 @@
         </div>
 
         <!-- Button -->
-        <button
-          (click)="buy(plan.code)"
-          class="mt-10 w-full py-4 rounded-2xl
-                 font-bold transition-all"
+       <button
+  (click)="selectPlan(plan.code)"
 
-          [ngClass]="{
-            'bg-slate-200 hover:bg-slate-300': i !== 1,
-            'bg-primary text-white shadow-lg hover:scale-[1.02]': i === 1
-          }"
-        >
-          Elegir Plan
-        </button>
+  [disabled]="plan.code === currentPlan"
+
+  class="mt-10 w-full py-4 rounded-2xl font-bold transition-all"
+
+  [ngClass]="{
+    'bg-slate-200 hover:bg-slate-300': i !== 1 && plan.code !== currentPlan,
+    'bg-primary text-white shadow-lg hover:scale-[1.02]': i === 1 && plan.code !== currentPlan,
+    'bg-emerald-500 text-white cursor-not-allowed': plan.code === currentPlan
+  }"
+>
+  {{ plan.code === currentPlan ? '✔ Plan Actual' : 'Elegir Plan' }}
+</button>
+
 
       </div>
 
