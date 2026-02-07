@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ClientCourse } from '../../models/ClientCourseDto';
 import { ClientCourseService } from '../../service/CourseService';
+import { PlanService } from '../../service/PlanService';
 
 @Component({
   selector: 'app-curso',
@@ -15,9 +17,13 @@ export class CursoComponent implements OnInit {
 
   courses: ClientCourse[] = [];
   filteredCourses: ClientCourse[] = [];
+  subscriptionPlanCode!: string;
 
   searchTitle: string = '';
   showFilters: boolean = false;
+  selectedCategory: string | null = null;
+  selectedCourse: ClientCourse | null = null;
+  showPricingModal: boolean = false;
 
   categories: string[] = [
     'Backend',
@@ -27,25 +33,43 @@ export class CursoComponent implements OnInit {
     'Data Science'
   ];
 
-  selectedCategory: string | null = null;
-
-  constructor(private readonly courseService: ClientCourseService) { }
+  constructor(
+    private router: Router,
+    private readonly courseService: ClientCourseService,
+    private readonly planService: PlanService
+  ) { }
 
   ngOnInit(): void {
-    this.loadCourses();
+    this.loadSubscription();
   }
 
   private loadCourses(): void {
     this.courseService.getAll().subscribe({
       next: (data) => {
-        this.courses = data;
-        this.filteredCourses = data; //listado directo
+        console.log("🔥 Cursos recibidos:", data);
+        this.courses = data.map(course => ({
+          ...course,
+          unlocked:
+            course.isFree ||
+            course.requiredPlanCode === this.subscriptionPlanCode
+        }));
+
+        this.filteredCourses = this.courses;
       },
       error: (err) => console.error('Error loading courses:', err),
     });
   }
 
- search(): void {
+  private loadSubscription(): void {
+    this.planService.getMySubscription().subscribe({
+      next: (sub) => {
+        this.subscriptionPlanCode = sub.planCode;
+        this.loadCourses();
+      }
+    });
+  }
+
+  search(): void {
     const query = this.searchTitle.trim().toLowerCase();
 
     if (!query) {
@@ -104,9 +128,32 @@ export class CursoComponent implements OnInit {
     }
 
     return {
-      '--card-glow': 'rgba(0,255,255,0.25)', 
+      '--card-glow': 'rgba(0,255,255,0.25)',
     };
   }
 
+  onCourseClick(course: ClientCourse) {
 
+    // 🔒 Curso bloqueado → modal
+    if (!course.unlocked) {
+      this.selectedCourse = course;
+      this.showPricingModal = true;
+      return;
+    }
+
+    // ✅ Curso desbloqueado → navegar normal
+    console.log("Entrar al curso:", course.title);
+
+    // aquí luego harás:
+    // this.router.navigate(['/curso', course.id]);
+  }
+
+  goToPlans() {
+    this.closeModal(); // opcional
+    this.router.navigate(['/client/plans']);
+  }
+
+  closeModal() {
+    this.showPricingModal = false;
+  }
 }

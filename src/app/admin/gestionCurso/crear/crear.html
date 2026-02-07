@@ -1,4 +1,3 @@
-
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center md:text-left">
 
   <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-3">
@@ -13,14 +12,12 @@
 
 <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-  <div
-    class="absolute -inset-1 rounded-[32px]
+  <div class="absolute -inset-1 rounded-[32px]
     bg-gradient-to-r from-cyan-400 via-emerald-400 to-indigo-500
     blur-2xl opacity-25 animate-pulse">
   </div>
 
-  <div
-    class="relative rounded-[32px] p-8 md:p-12
+  <div class="relative rounded-[32px] p-8 md:p-12
     bg-slate-900/40 backdrop-blur-xl
     border border-cyan-400/20
     shadow-[0_0_40px_rgba(0,224,255,0.10)]
@@ -33,13 +30,11 @@
           Título del Curso
         </label>
 
-        <input [(ngModel)]="course.title" name="title" required
-          class="w-full h-12 px-5 rounded-xl
+        <input [(ngModel)]="course.title" name="title" required class="w-full h-12 px-5 rounded-xl
           bg-slate-950/40 border border-slate-800
           text-slate-200 placeholder:text-slate-600
           focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/20
-          transition-all duration-300"
-          placeholder="Ej: Angular desde cero" />
+          transition-all duration-300" placeholder="Ej: Angular desde cero" />
       </div>
 
       <div>
@@ -47,13 +42,11 @@
           Subtítulo
         </label>
 
-        <input [(ngModel)]="course.subtitle" name="subtitle"
-          class="w-full h-12 px-5 rounded-xl
+        <input [(ngModel)]="course.subtitle" name="subtitle" class="w-full h-12 px-5 rounded-xl
           bg-slate-950/40 border border-slate-800
           text-slate-200 placeholder:text-slate-600
           focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/20
-          transition-all duration-300"
-          placeholder="Ej: Aprende paso a paso con proyectos reales" />
+          transition-all duration-300" placeholder="Ej: Aprende paso a paso con proyectos reales" />
       </div>
 
       <div>
@@ -61,13 +54,11 @@
           Descripción
         </label>
 
-        <textarea [(ngModel)]="course.description" name="description" rows="5"
-          class="w-full px-5 py-4 rounded-xl resize-none
+        <textarea [(ngModel)]="course.description" name="description" rows="5" class="w-full px-5 py-4 rounded-xl resize-none
           bg-slate-950/40 border border-slate-800
           text-slate-200 placeholder:text-slate-600
           focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/20
-          transition-all duration-300"
-          placeholder="Describe el contenido del curso..."></textarea>
+          transition-all duration-300" placeholder="Describe el contenido del curso..."></textarea>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -77,9 +68,7 @@
             Icono del Curso
           </label>
 
-          <input type="file" accept="image/*"
-            (change)="onIconSelected($event)"
-            class="block w-full text-sm text-slate-400
+          <input type="file" accept="image/*" (change)="onIconSelected($event)" class="block w-full text-sm text-slate-400
             file:mr-4 file:h-11 file:px-5
             file:rounded-xl file:border-0
             file:bg-cyan-400/10 file:text-cyan-300
@@ -87,8 +76,7 @@
             transition-all cursor-pointer" />
 
           <div *ngIf="iconPreview" class="mt-4 flex items-center gap-4">
-            <img [src]="iconPreview"
-              class="w-16 h-16 rounded-xl border border-white/10 shadow-lg object-cover" />
+            <img [src]="iconPreview" class="w-16 h-16 rounded-xl border border-white/10 shadow-lg object-cover" />
 
             <p class="text-xs text-slate-500">
               Vista previa del icono
@@ -103,17 +91,10 @@
 
           <div class="flex gap-3 items-center">
 
-            <input type="color"
-              [(ngModel)]="course.coverUrl"
-              name="coverUrl"
-              class="w-12 h-11 rounded-xl cursor-pointer
+            <input type="color" [(ngModel)]="course.coverUrl" name="coverUrl" class="w-12 h-11 rounded-xl cursor-pointer
               border border-slate-800 bg-slate-950" />
 
-            <input type="text"
-              [(ngModel)]="course.coverUrl"
-              name="coverCode"
-              readonly
-              class="flex-1 h-11 px-4 rounded-xl
+            <input type="text" [(ngModel)]="course.coverUrl" name="coverCode" readonly class="flex-1 h-11 px-4 rounded-xl
               bg-slate-950/40 border border-slate-800
               text-slate-200 text-sm" />
 
@@ -127,8 +108,7 @@
           ¿Curso Gratis?
         </label>
 
-        <select [(ngModel)]="course.isFree" name="isFree"
-          class="w-full h-12 px-5 rounded-xl appearance-none
+        <select [(ngModel)]="course.isFree" name="isFree" class="w-full h-12 px-5 rounded-xl appearance-none
           bg-slate-950/40 border border-slate-800
           text-slate-200
           focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/20
@@ -144,16 +124,16 @@
           Plan requerido
         </label>
 
-        <select [(ngModel)]="course.requiredPlanCode" name="requiredPlanCode"
-          class="w-full h-12 px-5 rounded-xl appearance-none
+        <select [(ngModel)]="course.requiredPlanCode" name="requiredPlanCode" class="w-full h-12 px-5 rounded-xl appearance-none
           bg-slate-950/40 border border-slate-800
           text-slate-200
           focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/20
           transition-all cursor-pointer">
 
-          <option value="BASIC">BASIC</option>
-          <option value="PREMIUM">PREMIUM</option>
-          <option value="PRO">PRO</option>
+          <option *ngFor="let plan of plans" [value]="plan.code">
+            {{ plan.name }}
+          </option>
+
         </select>
       </div>
 
@@ -162,8 +142,7 @@
           ¿Publicar Curso?
         </label>
 
-        <select [(ngModel)]="course.isPublished" name="isPublished"
-          class="w-full h-12 px-5 rounded-xl appearance-none
+        <select [(ngModel)]="course.isPublished" name="isPublished" class="w-full h-12 px-5 rounded-xl appearance-none
           bg-slate-950/40 border border-slate-800
           text-slate-200
           focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/20
@@ -175,8 +154,7 @@
       </div>
 
       <div class="pt-4">
-        <button type="submit"
-          class="w-full h-14 rounded-full font-bold text-lg
+        <button type="submit" class="w-full h-14 rounded-full font-bold text-lg
           flex items-center justify-center gap-3
           bg-gradient-to-r from-emerald-400 to-green-500
           text-slate-950
@@ -194,7 +172,18 @@
       </div>
 
     </form>
+
+    <div class="flex justify-start mt-6">
+      <button type="button" (click)="volver()" class="flex items-center gap-2 px-5 py-2 rounded-full
+               text-sm font-medium text-slate-400
+               hover:text-cyan-300 hover:bg-slate-800/40
+               transition-all duration-300">
+        <span class="material-symbols-outlined text-base">arrow_back</span>
+        Volver
+      </button>
+    </div>
+
+
   </div>
 </div>
-
 <br><br>
