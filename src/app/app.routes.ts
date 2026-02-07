@@ -13,6 +13,8 @@ import { DashboardClient } from './client/dashboard-client/dashboard-client';
 import { HomeClient } from './client/home-client/home-client';
 import { CursoComponent } from './client/curso/curso';
 import { PlansComponent } from './client/plans/plans';
+import { ListadoSuscripcion } from './admin/gestionSuscripcion/listado-suscripcion/listado-suscripcion';
+import { EditarSuscripcion } from './admin/gestionSuscripcion/editar-suscripcion/editar-suscripcion';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -47,7 +49,10 @@ export const routes: Routes = [
       { path: 'gestionCurso/listado', component: ListadoComponent },
       { path: 'gestionCurso/crear', component: InsertCourse },
       { path: 'gestionCurso/editar/:id', component: EditCourse },
-      { path: 'gestionCurso/detalle/:id', component: DetailCourse }
+      { path: 'gestionCurso/detalle/:id', component: DetailCourse },
+
+      { path: 'gestionSuscripcion', component: ListadoSuscripcion },
+      { path: 'gestionSuscripcion/editar/:id', component: EditarSuscripcion }
     ]
   }
 ];
