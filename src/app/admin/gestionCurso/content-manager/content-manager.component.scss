@@ -1,0 +1,41 @@
+// Asegúrate de importar la fuente en tu styles.scss global o index.html:
+// @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+.bg-background-dark { background-color: #050810; }
+.text-slate-100 { color: #f1f5f9; }
+
+.glass-panel {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.neo-shadow {
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.1);
+}
+
+.purple-glow {
+    box-shadow: 0 0 40px rgba(112, 0, 255, 0.15);
+}
+
+.pdf-canvas {
+    background: radial-gradient(circle at center, #1e293b 0%, #050810 100%);
+}
+
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 210, 255, 0.2);
+    border-radius: 10px;
+}
+
+// Hover effects para los 3 puntos
+.module-item:hover .more-actions {
+    opacity: 1;
+}
+
+// Colores Tailwind personalizados (si no usas config de tailwind, defínelos aquí)
+.text-primary { color: #00D2FF; }
+.bg-primary { background-color: #00D2FF; }
+.border-primary-20 { border-color: rgba(0, 210, 255, 0.2); }
+.bg-surface-dark { background-color: #0F172A; }

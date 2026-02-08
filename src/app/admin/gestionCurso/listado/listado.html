@@ -167,6 +167,13 @@
             <td class="px-8 py-6 text-right">
               <div class="flex items-center justify-end gap-3">
 
+
+                <a [routerLink]="['/admin/gestionCurso/contenido', c.id]" 
+                class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-all"
+                title="Gestionar Contenido">
+                <span class="material-icons-round text-xl">folder_open</span>
+                </a>
+
                 <a [routerLink]="['/admin/gestionCurso/detalle', c.id]" class="w-10 h-10 rounded-xl flex items-center justify-center
          text-slate-400
          hover:text-yellow-400 hover:bg-yellow-400/10
