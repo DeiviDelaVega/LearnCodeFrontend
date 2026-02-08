@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+
 import { ClientCourse } from '../../models/ClientCourseDto';
 import { ClientCourseService } from '../../service/CourseService';
 import { PlanService } from '../../service/PlanService';
@@ -17,82 +18,157 @@ export class CursoComponent implements OnInit {
 
   courses: ClientCourse[] = [];
   filteredCourses: ClientCourse[] = [];
-  subscriptionPlanCode!: string;
 
+  subscriptionPlanCode: string = 'FREE';
+  hasSubscription: boolean = false;
   searchTitle: string = '';
-  showFilters: boolean = false;
   selectedCategory: string | null = null;
   selectedCourse: ClientCourse | null = null;
+  showFilters: boolean = false;
   showPricingModal: boolean = false;
 
-  categories: string[] = [
+
+  readonly categories: string[] = [
     'Backend',
     'Frontend',
     'Mobile',
     'DevOps',
-    'Data Science'
+    'Data Science',
   ];
 
+  private readonly planLevels: Record<string, number> = {
+    FREE: 0,
+    ORO: 1,
+    PLATINO: 2,
+    DIAMANTE: 3,
+  };
+
+  private normalizePlan(code: string | null | undefined): string {
+    if (!code) return "FREE";
+
+    return code
+      .trim()
+      .toUpperCase()
+      .replace("PLAN_", "")
+      .replace("PLAN ", "")
+      .replace(" ", "");
+  }
+
+
   constructor(
-    private router: Router,
+    private readonly router: Router,
+    private cd: ChangeDetectorRef,
     private readonly courseService: ClientCourseService,
     private readonly planService: PlanService
   ) { }
 
   ngOnInit(): void {
-    this.loadSubscription();
+    this.loadSubscriptionAndCourses();
+  }
+
+  private loadSubscriptionAndCourses(): void {
+    this.planService.getMySubscription().subscribe({
+      next: (sub) => {
+        if (sub?.status === 'ACTIVE') {
+          this.subscriptionPlanCode = sub.planCode;
+          this.hasSubscription = true;
+
+          console.log("PLAN RECIBIDO:", sub.planCode);
+        } else {
+          this.setFreeUser();
+        }
+
+        this.loadCourses();
+        this.cd.detectChanges();
+      },
+      error: () => {
+        console.warn('⚠️ Usuario sin suscripción → FREE');
+        this.setFreeUser();
+        this.loadCourses();
+      },
+    });
+  }
+
+  private setFreeUser(): void {
+    this.subscriptionPlanCode = 'FREE';
+    this.hasSubscription = false;
   }
 
   private loadCourses(): void {
     this.courseService.getAll().subscribe({
       next: (data) => {
-        console.log("🔥 Cursos recibidos:", data);
-        this.courses = data.map(course => ({
+
+        // 🔥 DEBUG: ver qué está llegando del backend
+        data.forEach(c => {
+          console.log("📌 CURSO:", c.title,
+            "| isFree:", c.isFree,
+            "| requiredPlanCode:", c.requiredPlanCode
+          );
+        });
+
+        this.courses = data.map((course) => ({
           ...course,
-          unlocked:
-            course.isFree ||
-            course.requiredPlanCode === this.subscriptionPlanCode
+          unlocked: this.canAccessCourse(course),
         }));
 
-        this.filteredCourses = this.courses;
+        this.filteredCourses = [...this.courses];
+        this.cd.detectChanges();
       },
-      error: (err) => console.error('Error loading courses:', err),
+      error: (err) => {
+        console.error('❌ Error cargando cursos:', err);
+      },
     });
   }
 
-  private loadSubscription(): void {
-    this.planService.getMySubscription().subscribe({
-      next: (sub) => {
-        this.subscriptionPlanCode = sub.planCode;
-        this.loadCourses();
-      }
-    });
+  private canAccessCourse(course: ClientCourse): boolean {
+    if (course.isFree) return true;
+
+    if (!course.requiredPlanCode) {
+      console.warn("⚠️ Curso sin plan requerido:", course.title);
+      return false;
+    }
+
+    const required = this.normalizePlan(course.requiredPlanCode);
+    const user = this.normalizePlan(this.subscriptionPlanCode) ?? "FREE";
+
+    const userLevel = this.planLevels[user] ?? 0;
+    const courseLevel = this.planLevels[required] ?? 999;
+
+    return userLevel >= courseLevel;
+  }
+
+
+
+  private updateUnlockedCourses(): void {
+    this.courses = this.courses.map(course => ({
+      ...course,
+      unlocked: this.canAccessCourse(course)
+    }));
+
+    this.filteredCourses = [...this.courses];
   }
 
   search(): void {
     const query = this.searchTitle.trim().toLowerCase();
 
-    if (!query) {
-      this.filteredCourses = this.courses;
-      return;
-    }
-
-    this.filteredCourses = this.courses.filter((course) =>
-      course.title.toLowerCase().includes(query)
-    );
+    this.filteredCourses = query
+      ? this.courses.filter((c) =>
+        c.title.toLowerCase().includes(query)
+      )
+      : [...this.courses];
   }
 
   filterByCategory(category: string): void {
     this.selectedCategory = category;
 
-    this.filteredCourses = this.courses.filter(course =>
+    this.filteredCourses = this.courses.filter((course) =>
       course.subtitle?.toLowerCase().includes(category.toLowerCase())
     );
   }
 
   clearFilters(): void {
     this.selectedCategory = null;
-    this.filteredCourses = this.courses;
+    this.filteredCourses = [...this.courses];
   }
 
   toggleFilters(): void {
@@ -102,10 +178,18 @@ export class CursoComponent implements OnInit {
   isColor(value: string): boolean {
     return (
       value.startsWith('#') ||
-      value.startsWith('rgb') ||
-      value.startsWith('rgba')
+      value.startsWith('rgb')
     );
   }
+
+  getCoursePlan(course: ClientCourse): string {
+  if (course.isFree) return "GRATIS";
+  const plan = course.requiredPlanCode?.trim().toUpperCase();
+  if (!plan) return "FREE";
+  return plan;
+}
+
+
 
   getGlowClassByIndex(index: number): string {
     const glows = [
@@ -113,7 +197,7 @@ export class CursoComponent implements OnInit {
       'card-glow-indigo',
       'card-glow-pink',
       'card-glow-green',
-      'card-glow-orange'
+      'card-glow-orange',
     ];
 
     return glows[index % glows.length];
@@ -123,7 +207,7 @@ export class CursoComponent implements OnInit {
     if (this.isColor(course.coverUrl)) {
       return {
         '--card-glow': course.coverUrl,
-        'border-color': course.coverUrl,
+        borderColor: course.coverUrl,
       };
     }
 
@@ -132,28 +216,25 @@ export class CursoComponent implements OnInit {
     };
   }
 
-  onCourseClick(course: ClientCourse) {
-
-    // 🔒 Curso bloqueado → modal
-    if (!course.unlocked) {
+  onCourseClick(course: ClientCourse): void {
+    if (!this.canAccessCourse(course)) {
       this.selectedCourse = course;
       this.showPricingModal = true;
       return;
     }
 
-    // ✅ Curso desbloqueado → navegar normal
-    console.log("Entrar al curso:", course.title);
-
-    // aquí luego harás:
+    console.log("✅ Acceso permitido");
+    console.log('✅ Entrar al curso:', course.title);
     // this.router.navigate(['/curso', course.id]);
   }
 
-  goToPlans() {
-    this.closeModal(); // opcional
+  goToPlans(): void {
+    this.closeModal();
     this.router.navigate(['/client/plans']);
   }
 
-  closeModal() {
+  closeModal(): void {
     this.showPricingModal = false;
+    this.selectedCourse = null;
   }
 }

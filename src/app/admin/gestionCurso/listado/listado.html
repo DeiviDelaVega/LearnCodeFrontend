@@ -192,6 +192,69 @@
 
         </tbody>
       </table>
+
+      
+      <div
+        class="flex flex-col sm:flex-row items-center justify-between gap-6 px-8 py-6 border-t border-slate-200 dark:border-slate-800">
+
+        <p class="text-sm text-slate-500 dark:text-slate-400">
+          Página
+          <span class="font-bold text-slate-800 dark:text-white">
+            {{ page + 1 }}
+          </span>
+          de
+          <span class="font-bold text-slate-800 dark:text-white">
+            {{ totalPages }}
+          </span>
+        </p>
+
+        <nav *ngIf="totalPages > 1" class="flex flex-wrap items-center gap-2">
+
+          <button (click)="changePage(0)" [disabled]="page === 0" class="px-4 h-10 rounded-xl font-semibold transition-all
+      bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300
+      hover:bg-primary hover:text-white
+      disabled:opacity-40">
+
+            ⏮
+          </button>
+
+          <button (click)="changePage(page - 1)" [disabled]="page === 0" class="px-4 h-10 rounded-xl font-semibold transition-all
+      bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300
+      hover:bg-primary hover:text-white
+      disabled:opacity-40">
+
+            ◀
+          </button>
+
+          <button *ngFor="let p of pagesArray" (click)="changePage(p)" class="w-10 h-10 rounded-xl font-bold transition-all
+      border border-slate-200 dark:border-slate-700
+      hover:bg-primary hover:text-white" [ngClass]="{
+        'bg-primary text-white shadow-[0_0_15px_rgba(0,224,255,0.35)]': p === page,
+        'bg-white/40 dark:bg-slate-900/40 text-slate-600 dark:text-slate-300': p !== page
+      }">
+
+            {{ p + 1 }}
+          </button>
+
+          <button (click)="changePage(page + 1)" [disabled]="page === totalPages - 1" class="px-4 h-10 rounded-xl font-semibold transition-all
+      bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300
+      hover:bg-primary hover:text-white
+      disabled:opacity-40">
+
+            ▶
+          </button>
+
+          <button (click)="changePage(totalPages - 1)" [disabled]="page === totalPages - 1" class="px-4 h-10 rounded-xl font-semibold transition-all
+      bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300
+      hover:bg-primary hover:text-white
+      disabled:opacity-40">
+
+            ⏭
+          </button>
+
+        </nav>
+      </div>
     </div>
   </div>
+
 </main>
