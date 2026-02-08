@@ -52,6 +52,7 @@ export class ListadoClienteComponent implements OnInit {
       params = params.set('status', 'ALL');
     }
 
+    
     this.http.get<any>(this.apiUrl, { params }).subscribe((resp) => {
       this.clientes = resp.clientes.map((c: any) => ({
         ...c,

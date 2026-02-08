@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,6 +17,7 @@ export class DetailCourse implements OnInit {
   
   constructor(
     private route: ActivatedRoute,
+    private cd: ChangeDetectorRef,
     private router: Router,
     private courseService: AdminCourseService 
   ) {}
@@ -31,6 +32,7 @@ export class DetailCourse implements OnInit {
    this.courseService.getById(id).subscribe({  
       next: (data) => {
         this.course = data;
+        this.cd.detectChanges();        
       },
       error: () => {
         alert('No se pudo cargar el curso');

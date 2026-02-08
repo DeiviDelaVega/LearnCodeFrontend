@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -17,15 +17,16 @@ export class ListadoComponent implements OnInit {
 
   courses: AdminCourseDto[] = [];
   filteredCourses: AdminCourseDto[] = [];
+  pagesArray: number[] = []; 
 
   search: string = '';
   published: string = 'ALL';
-
   page: number = 0;
   totalPages: number = 0;
 
   constructor(
     private readonly router: Router,
+    private cd: ChangeDetectorRef,
     private readonly courseService: AdminCourseService
   ) { }
 
@@ -34,12 +35,17 @@ export class ListadoComponent implements OnInit {
   }
 
   private loadCourses(): void {
-    this.courseService.getAll().subscribe({
-      next: (courses) => {
-        this.courses = courses;
-        this.filteredCourses = courses;
+    this.courseService.getPaged(this.page, 4).subscribe({
+      next: (res) => {
+        console.log("RESPUESTA PAGINADA:", res);
+
+        this.courses = res.content;
+        this.filteredCourses = res.content;
+        this.totalPages = res.totalPages;
+
+        this.cd.detectChanges();
       },
-      error: () => this.showError('Error cargando cursos')
+      error: () => this.showError('Error cargando cursos paginados')
     });
   }
 
@@ -70,6 +76,7 @@ export class ListadoComponent implements OnInit {
         this.courses = this.courses.filter(c => c.id !== courseId);
         this.filteredCourses = this.filteredCourses.filter(c => c.id !== courseId);
 
+        this.cd.detectChanges();
         this.showSuccess('Curso eliminado correctamente');
       },
       error: () => this.showError('No se pudo eliminar el curso')
@@ -80,6 +87,7 @@ export class ListadoComponent implements OnInit {
     this.filteredCourses = this.courses.filter(course =>
       this.matchesSearch(course) && this.matchesPublished(course)
     );
+    this.cd.detectChanges();
   }
 
   resetFilters(): void {
@@ -87,6 +95,8 @@ export class ListadoComponent implements OnInit {
     this.published = 'ALL';
     this.page = 0;
     this.filteredCourses = this.courses;
+
+    this.cd.detectChanges();
   }
 
   private matchesSearch(course: AdminCourseDto): boolean {
@@ -99,9 +109,14 @@ export class ListadoComponent implements OnInit {
       String(course.isPublished) === this.published;
   }
 
-  changePage(page: number): void {
-    this.page = page;
+  changePage(newPage: number): void {
+
+    if(newPage < 0 || newPage>= this.totalPages) return;
+
+    this.page = newPage;
     this.loadCourses();
+
+    this.cd.detectChanges();
   }
 
   private showSuccess(message: string): void {

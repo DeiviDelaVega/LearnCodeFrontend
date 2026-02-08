@@ -23,44 +23,106 @@
     shadow-[0_0_40px_rgba(0,224,255,0.10)]
     overflow-hidden">
 
-    <form (ngSubmit)="createCourse()" class="space-y-8">
+    <form [formGroup]="form" (ngSubmit)="createCourse()" class="space-y-8">
 
+      <!-- Título del Curso -->
       <div>
-        <label class="block text-sm font-medium text-slate-400 mb-2">
+        <label class="block text-sm font-medium mb-2"
+          [ngClass]="{
+            'text-red-400': form.get('title')?.invalid && form.get('title')?.touched,
+            'text-slate-400': !(form.get('title')?.invalid && form.get('title')?.touched)
+          }">
           Título del Curso
         </label>
 
-        <input [(ngModel)]="course.title" name="title" required class="w-full h-12 px-5 rounded-xl
-          bg-slate-950/40 border border-slate-800
-          text-slate-200 placeholder:text-slate-600
-          focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/20
-          transition-all duration-300" placeholder="Ej: Angular desde cero" />
+        <input
+          formControlName="title"
+          class="w-full h-12 px-5 rounded-xl bg-slate-950/40 border transition-all duration-300"
+          [ngClass]="{
+            'border-red-500 focus:border-red-500 focus:ring-red-500/20':
+              form.get('title')?.invalid && form.get('title')?.touched,
+            'border-slate-800 focus:border-cyan-400/60 focus:ring-cyan-400/20':
+              !(form.get('title')?.invalid && form.get('title')?.touched)
+          }"
+          placeholder="Ej: Angular desde cero"
+        />
+
+        <!-- Mensajes de error -->
+        <p *ngIf="form.get('title')?.errors?.['required'] && form.get('title')?.touched"
+           class="text-sm text-red-400 mt-2">
+          El título es obligatorio.
+        </p>
+        <p *ngIf="form.get('title')?.errors?.['minlength'] && form.get('title')?.touched"
+           class="text-sm text-red-400 mt-2">
+          Debe tener al menos 5 caracteres.
+        </p>
       </div>
 
+      <!-- Subtítulo -->
       <div>
-        <label class="block text-sm font-medium text-slate-400 mb-2">
+        <label class="block text-sm font-medium mb-2"
+          [ngClass]="{
+            'text-red-400': form.get('subtitle')?.invalid && form.get('subtitle')?.touched,
+            'text-slate-400': !(form.get('subtitle')?.invalid && form.get('subtitle')?.touched)
+          }">
           Subtítulo
         </label>
 
-        <input [(ngModel)]="course.subtitle" name="subtitle" class="w-full h-12 px-5 rounded-xl
-          bg-slate-950/40 border border-slate-800
-          text-slate-200 placeholder:text-slate-600
-          focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/20
-          transition-all duration-300" placeholder="Ej: Aprende paso a paso con proyectos reales" />
+        <input
+          formControlName="subtitle"
+          class="w-full h-12 px-5 rounded-xl bg-slate-950/40 border transition-all duration-300"
+          [ngClass]="{
+            'border-red-500 focus:border-red-500 focus:ring-red-500/20':
+              form.get('subtitle')?.invalid && form.get('subtitle')?.touched,
+            'border-slate-800 focus:border-cyan-400/60 focus:ring-cyan-400/20':
+              !(form.get('subtitle')?.invalid && form.get('subtitle')?.touched)
+          }"
+          placeholder="Ej: Aprende paso a paso con proyectos reales"
+        />
+
+        <p *ngIf="form.get('subtitle')?.errors?.['required'] && form.get('subtitle')?.touched"
+           class="text-sm text-red-400 mt-2">
+          El subtítulo es obligatorio.
+        </p>
+        <p *ngIf="form.get('subtitle')?.errors?.['minlength'] && form.get('subtitle')?.touched"
+           class="text-sm text-red-400 mt-2">
+          Debe tener al menos 5 caracteres.
+        </p>
       </div>
 
+      <!-- Descripción -->
       <div>
-        <label class="block text-sm font-medium text-slate-400 mb-2">
+        <label class="block text-sm font-medium mb-2"
+          [ngClass]="{
+            'text-red-400': form.get('description')?.invalid && form.get('description')?.touched,
+            'text-slate-400': !(form.get('description')?.invalid && form.get('description')?.touched)
+          }">
           Descripción
         </label>
 
-        <textarea [(ngModel)]="course.description" name="description" rows="5" class="w-full px-5 py-4 rounded-xl resize-none
-          bg-slate-950/40 border border-slate-800
-          text-slate-200 placeholder:text-slate-600
-          focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/20
-          transition-all duration-300" placeholder="Describe el contenido del curso..."></textarea>
+        <textarea
+          formControlName="description"
+          rows="5"
+          class="w-full px-5 py-4 rounded-xl resize-none border transition-all"
+          [ngClass]="{
+            'border-red-500 focus:border-red-500 focus:ring-red-500/20':
+              form.get('description')?.invalid && form.get('description')?.touched,
+            'border-slate-800 focus:border-cyan-400/60 focus:ring-cyan-400/20':
+              !(form.get('description')?.invalid && form.get('description')?.touched)
+          }"
+        ></textarea>
+
+        <p *ngIf="form.get('description')?.errors?.['required'] && form.get('description')?.touched"
+           class="text-sm text-red-400 mt-2">
+          La descripción es obligatoria.
+        </p>
+        <p *ngIf="form.get('description')?.errors?.['minlength'] && form.get('description')?.touched"
+           class="text-sm text-red-400 mt-2">
+          Debe tener mínimo 20 caracteres.
+        </p>
       </div>
 
+      <!-- Icono y Cover -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
         <div>
@@ -77,10 +139,7 @@
 
           <div *ngIf="iconPreview" class="mt-4 flex items-center gap-4">
             <img [src]="iconPreview" class="w-16 h-16 rounded-xl border border-white/10 shadow-lg object-cover" />
-
-            <p class="text-xs text-slate-500">
-              Vista previa del icono
-            </p>
+            <p class="text-xs text-slate-500">Vista previa del icono</p>
           </div>
         </div>
 
@@ -90,69 +149,72 @@
           </label>
 
           <div class="flex gap-3 items-center">
-
-            <input type="color" [(ngModel)]="course.coverUrl" name="coverUrl" class="w-12 h-11 rounded-xl cursor-pointer
-              border border-slate-800 bg-slate-950" />
-
-            <input type="text" [(ngModel)]="course.coverUrl" name="coverCode" readonly class="flex-1 h-11 px-4 rounded-xl
-              bg-slate-950/40 border border-slate-800
-              text-slate-200 text-sm" />
+            <input type="color" formControlName="coverUrl" class="w-12 h-11 rounded-xl cursor-pointer border bg-slate-950" />
+            <input type="text" [value]="form.get('coverUrl')?.value" readonly
+  class="flex-1 h-11 px-4 rounded-xl bg-slate-950/40 border border-slate-800 text-slate-200 text-sm" />
 
           </div>
         </div>
 
       </div>
 
+      <!-- Curso Gratis -->
       <div>
         <label class="block text-sm font-medium text-slate-400 mb-2">
           ¿Curso Gratis?
         </label>
 
-        <select [(ngModel)]="course.isFree" name="isFree" class="w-full h-12 px-5 rounded-xl appearance-none
+        <select formControlName="isFree" class="w-full h-12 px-5 rounded-xl appearance-none
           bg-slate-950/40 border border-slate-800
           text-slate-200
           focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/20
           transition-all cursor-pointer">
-
           <option [ngValue]="true">Sí, acceso abierto</option>
           <option [ngValue]="false">No, requiere plan</option>
         </select>
       </div>
 
-      <div *ngIf="!course.isFree">
-        <label class="block text-sm font-medium text-slate-400 mb-2">
+      <!-- Plan requerido si no es gratuito -->
+      <div *ngIf="!form.get('isFree')?.value">
+        <label class="block text-sm font-medium mb-2"
+          [ngClass]="{
+            'text-red-400': form.get('requiredPlanCode')?.invalid && form.get('requiredPlanCode')?.touched,
+            'text-slate-400': !(form.get('requiredPlanCode')?.invalid && form.get('requiredPlanCode')?.touched)
+          }">
           Plan requerido
         </label>
 
-        <select [(ngModel)]="course.requiredPlanCode" name="requiredPlanCode" class="w-full h-12 px-5 rounded-xl appearance-none
+        <select formControlName="requiredPlanCode" class="w-full h-12 px-5 rounded-xl appearance-none
           bg-slate-950/40 border border-slate-800
           text-slate-200
           focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/20
           transition-all cursor-pointer">
-
-          <option *ngFor="let plan of plans" [value]="plan.code">
-            {{ plan.name }}
-          </option>
-
+          <option *ngFor="let plan of plans" [value]="plan.code">{{ plan.name }}</option>
         </select>
+
+        <p *ngIf="form.get('requiredPlanCode')?.errors?.['required'] && form.get('requiredPlanCode')?.touched"
+           class="text-sm text-red-400 mt-2">
+          Debes seleccionar un plan.
+        </p>
       </div>
 
+      <!-- Publicar Curso -->
       <div>
         <label class="block text-sm font-medium text-slate-400 mb-2">
           ¿Publicar Curso?
         </label>
 
-        <select [(ngModel)]="course.isPublished" name="isPublished" class="w-full h-12 px-5 rounded-xl appearance-none
+        <select formControlName="isPublished" class="w-full h-12 px-5 rounded-xl appearance-none
           bg-slate-950/40 border border-slate-800
           text-slate-200
           focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/20
           transition-all cursor-pointer">
-
           <option [ngValue]="true">Sí, publicar ahora</option>
           <option [ngValue]="false">No, guardar como borrador</option>
         </select>
       </div>
 
+      <!-- Botón Crear Curso -->
       <div class="pt-4">
         <button type="submit" class="w-full h-14 rounded-full font-bold text-lg
           flex items-center justify-center gap-3
@@ -162,17 +224,14 @@
           hover:shadow-[0_0_35px_rgba(0,200,150,0.6)]
           hover:-translate-y-[2px]
           transition-all duration-300">
-
-          <span class="material-symbols-outlined font-bold">
-            add_circle
-          </span>
-
+          <span class="material-symbols-outlined font-bold">add_circle</span>
           Crear Curso
         </button>
       </div>
 
     </form>
 
+    <!-- Botón Volver -->
     <div class="flex justify-start mt-6">
       <button type="button" (click)="volver()" class="flex items-center gap-2 px-5 py-2 rounded-full
                text-sm font-medium text-slate-400
@@ -182,7 +241,6 @@
         Volver
       </button>
     </div>
-
 
   </div>
 </div>

@@ -29,4 +29,11 @@ export class AdminCourseService {
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.endpoint}/${id}`);
   }
+
+  getPaged(page: number, size: number) {
+    return this.http.get<any>(
+      `${this.endpoint}/paged?page=${page}&size=${size}`
+    );
+  }
+
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router, NavigationEnd } from '@angular/router';
@@ -25,6 +25,7 @@ export class PlansComponent implements OnInit {
 
   constructor(
     private planService: PlanService,
+    private cd: ChangeDetectorRef,
     private http: HttpClient,
   ) {
   }
@@ -56,6 +57,7 @@ loadAll() {
       }
 
       this.loading = false;
+      this.cd.detectChanges();
     },
     error: err => {
 
@@ -93,6 +95,7 @@ loadAll() {
         if (res.isConfirmed) {
           this.buy(code);
         }
+        
       });
 
       return;

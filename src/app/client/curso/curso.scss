@@ -1,7 +1,9 @@
+/* =======================================================
+   🌙 GLASS BASE
+======================================================= */
 .glass {
   background: rgba(255, 255, 255, 0.02);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
 }
 
 .search-glass {
@@ -10,66 +12,89 @@
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* =======================================================
+   ✨ COURSE CARD PREMIUM GLOW
+======================================================= */
 .course-card {
   position: relative;
   padding: 2px;
   border-radius: 2.5rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
-  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: 0 10px 30px -15px var(--glow-color);
+
+  transition: transform 0.6s ease, box-shadow 0.6s ease;
 }
 
+/* INNER */
 .card-inner {
-  position: relative;
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(15, 23, 42, 0.85);
   border-radius: 2.4rem;
   padding: 2rem;
   height: 100%;
-  z-index: 1;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+  z-index: 2;
 }
 
+/* =======================================================
+   💡 NEON BORDER + GLOW LIGHTS
+======================================================= */
+
+/* Border gradient */
 .course-card::before {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: 2.5rem;
-  padding: 1.5px;
-  background: linear-gradient(135deg, var(--glow-color), transparent 60%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
+  padding: 2px;
+
+  background: linear-gradient(
+    135deg,
+    var(--glow-color),
+    transparent 70%
+  );
+
+  mask: linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
   mask-composite: exclude;
-  opacity: 0.5;
-  transition: opacity 0.5s;
+
+  opacity: 0.4;
+  transition: opacity 0.6s ease;
 }
 
+/* Glow blur */
 .course-card::after {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -20px;
+
   background: var(--glow-color);
-  filter: blur(60px);
-  opacity: 0.15;
-  z-index: -1;
-  transition: opacity 0.5s, transform 0.5s;
+  filter: blur(90px);
+
+  opacity: 0.18;
+  z-index: 0;
+
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
+/* =======================================================
+   🚀 HOVER ANIMATION SMOOTH
+======================================================= */
 .course-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 50px -15px var(--glow-color);
-}
-
-.course-card:hover::after {
-  opacity: 0.3;
-  transform: scale(1.1);
+  transform: translateY(-12px) scale(1.02);
 }
 
 .course-card:hover::before {
   opacity: 1;
 }
 
+.course-card:hover::after {
+  opacity: 0.35;
+  transform: scale(1.15);
+}
+
+/* =======================================================
+   🎛 FILTER ANIMATION
+======================================================= */
 .filter-hidden {
   max-height: 0;
   opacity: 0;
@@ -84,48 +109,48 @@
   margin-top: 2rem;
 }
 
-///
-/// 
-/// 
+/* =======================================================
+   💎 MODAL + BUTTONS
+======================================================= */
 .glass-card {
   background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   transition: all 0.3s ease;
 }
 
 .holographic-btn {
   position: relative;
   overflow: hidden;
-  transition: 0.3s;
 }
 
 .holographic-btn::after {
-  content: '';
+  content: "";
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg,
-      transparent,
-      rgba(255, 255, 255, 0.15),
-      transparent);
+  inset: -100%;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transform: rotate(45deg);
-  transition: 0.5s;
+  transition: 0.6s;
 }
 
 .holographic-btn:hover::after {
-  left: 100%;
+  inset: 100%;
 }
 
+/* =======================================================
+   🎬 MODAL ANIMATIONS
+======================================================= */
 @keyframes modalZoom {
   from {
     opacity: 0;
-    transform: scale(0.95) translateY(10px);
+    transform: scale(0.95) translateY(20px);
     filter: blur(10px);
   }
-
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -137,16 +162,15 @@
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
   }
 }
 
 .animate-modal {
-  animation: modalZoom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: modalZoom 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .animate-overlay {
-  animation: fadeIn 0.3s ease-out forwards;
+  animation: fadeIn 0.3s ease-out;
 }
