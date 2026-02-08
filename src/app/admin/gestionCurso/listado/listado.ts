@@ -1,3 +1,4 @@
+
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,13 +17,13 @@ import Swal from 'sweetalert2';
 export class ListadoComponent implements OnInit {
 
   courses: AdminCourseDto[] = [];
-  filteredCourses: AdminCourseDto[] = [];
-  pagesArray: number[] = []; 
+  pagesArray: number[] = [];
 
   search: string = '';
   published: string = 'ALL';
   page: number = 0;
   totalPages: number = 0;
+  pageSize: number = 4;
 
   constructor(
     private readonly router: Router,
@@ -34,19 +35,25 @@ export class ListadoComponent implements OnInit {
     this.loadCourses();
   }
 
-  private loadCourses(): void {
-    this.courseService.getPaged(this.page, 4).subscribe({
+  // 🚀 Carga cursos desde backend paginado
+  loadCourses(): void {
+    this.courseService.getPaged(this.page, this.pageSize).subscribe({
       next: (res) => {
-        console.log("RESPUESTA PAGINADA:", res);
-
-        this.courses = res.content;
-        this.filteredCourses = res.content;
-        this.totalPages = res.totalPages;
-
-        this.cd.detectChanges();
+        this.courses = res.content;                  // cursos de la página actual
+        this.page = res.currentPage ?? 0;            // página actual segura
+        this.totalPages = res.totalPages ?? 1;       // total de páginas seguro
+        this.pagesArray = Array.from({ length: this.totalPages }, (_, i) => i);
+        this.cd.detectChanges();                     // fuerza renderizado
       },
-      error: () => this.showError('Error cargando cursos paginados')
+      error: () => this.showError('Error cargando cursos')
     });
+  }
+
+  // Cambiar página
+  changePage(newPage: number): void {
+    if (newPage < 0 || newPage >= this.totalPages) return;
+    this.page = newPage;
+    this.loadCourses(); // recarga la página correcta desde backend
   }
 
   viewDetail(courseId: string): void {
@@ -73,50 +80,23 @@ export class ListadoComponent implements OnInit {
   private deleteCourse(courseId: string): void {
     this.courseService.delete(courseId).subscribe({
       next: () => {
-        this.courses = this.courses.filter(c => c.id !== courseId);
-        this.filteredCourses = this.filteredCourses.filter(c => c.id !== courseId);
-
-        this.cd.detectChanges();
         this.showSuccess('Curso eliminado correctamente');
+        this.loadCourses(); // recarga la lista completa desde backend
       },
       error: () => this.showError('No se pudo eliminar el curso')
     });
   }
 
   applyFilters(): void {
-    this.filteredCourses = this.courses.filter(course =>
-      this.matchesSearch(course) && this.matchesPublished(course)
-    );
-    this.cd.detectChanges();
+    this.page = 0; // siempre reset a página 1
+    this.loadCourses(); // llama al backend
   }
 
   resetFilters(): void {
     this.search = '';
     this.published = 'ALL';
     this.page = 0;
-    this.filteredCourses = this.courses;
-
-    this.cd.detectChanges();
-  }
-
-  private matchesSearch(course: AdminCourseDto): boolean {
-    return !this.search ||
-      course.title.toLowerCase().includes(this.search.toLowerCase());
-  }
-
-  private matchesPublished(course: AdminCourseDto): boolean {
-    return this.published === 'ALL' ||
-      String(course.isPublished) === this.published;
-  }
-
-  changePage(newPage: number): void {
-
-    if(newPage < 0 || newPage>= this.totalPages) return;
-
-    this.page = newPage;
-    this.loadCourses();
-
-    this.cd.detectChanges();
+    this.loadCourses(); // recarga desde backend
   }
 
   private showSuccess(message: string): void {
