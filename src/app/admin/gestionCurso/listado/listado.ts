@@ -1,4 +1,3 @@
-
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -35,25 +34,23 @@ export class ListadoComponent implements OnInit {
     this.loadCourses();
   }
 
-  // 🚀 Carga cursos desde backend paginado
   loadCourses(): void {
     this.courseService.getPaged(this.page, this.pageSize).subscribe({
       next: (res) => {
-        this.courses = res.content;                  // cursos de la página actual
-        this.page = res.currentPage ?? 0;            // página actual segura
-        this.totalPages = res.totalPages ?? 1;       // total de páginas seguro
+        this.courses = res.content;                  
+        this.page = res.currentPage ?? 0;            
+        this.totalPages = res.totalPages ?? 1;      
         this.pagesArray = Array.from({ length: this.totalPages }, (_, i) => i);
-        this.cd.detectChanges();                     // fuerza renderizado
+        this.cd.detectChanges();                    
       },
-      error: () => this.showError('Error cargando cursos')
+      error: () => this.showError('Error cargando cursos paginados')
     });
   }
 
-  // Cambiar página
   changePage(newPage: number): void {
     if (newPage < 0 || newPage >= this.totalPages) return;
     this.page = newPage;
-    this.loadCourses(); // recarga la página correcta desde backend
+    this.loadCourses(); 
   }
 
   viewDetail(courseId: string): void {
@@ -81,22 +78,22 @@ export class ListadoComponent implements OnInit {
     this.courseService.delete(courseId).subscribe({
       next: () => {
         this.showSuccess('Curso eliminado correctamente');
-        this.loadCourses(); // recarga la lista completa desde backend
+        this.loadCourses(); 
       },
       error: () => this.showError('No se pudo eliminar el curso')
     });
   }
 
   applyFilters(): void {
-    this.page = 0; // siempre reset a página 1
-    this.loadCourses(); // llama al backend
+    this.page = 0; 
+    this.loadCourses(); 
   }
 
   resetFilters(): void {
     this.search = '';
     this.published = 'ALL';
     this.page = 0;
-    this.loadCourses(); // recarga desde backend
+    this.loadCourses(); 
   }
 
   private showSuccess(message: string): void {
