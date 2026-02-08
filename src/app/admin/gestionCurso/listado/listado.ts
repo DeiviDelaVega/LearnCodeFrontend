@@ -16,13 +16,13 @@ import Swal from 'sweetalert2';
 export class ListadoComponent implements OnInit {
 
   courses: AdminCourseDto[] = [];
-  filteredCourses: AdminCourseDto[] = [];
-  pagesArray: number[] = []; 
+  pagesArray: number[] = [];
 
   search: string = '';
   published: string = 'ALL';
   page: number = 0;
   totalPages: number = 0;
+  pageSize: number = 4;
 
   constructor(
     private readonly router: Router,
@@ -34,19 +34,23 @@ export class ListadoComponent implements OnInit {
     this.loadCourses();
   }
 
-  private loadCourses(): void {
-    this.courseService.getPaged(this.page, 4).subscribe({
+  loadCourses(): void {
+    this.courseService.getPaged(this.page, this.pageSize).subscribe({
       next: (res) => {
-        console.log("RESPUESTA PAGINADA:", res);
-
-        this.courses = res.content;
-        this.filteredCourses = res.content;
-        this.totalPages = res.totalPages;
-
-        this.cd.detectChanges();
+        this.courses = res.content;                  
+        this.page = res.currentPage ?? 0;            
+        this.totalPages = res.totalPages ?? 1;      
+        this.pagesArray = Array.from({ length: this.totalPages }, (_, i) => i);
+        this.cd.detectChanges();                    
       },
       error: () => this.showError('Error cargando cursos paginados')
     });
+  }
+
+  changePage(newPage: number): void {
+    if (newPage < 0 || newPage >= this.totalPages) return;
+    this.page = newPage;
+    this.loadCourses(); 
   }
 
   viewDetail(courseId: string): void {
@@ -73,50 +77,23 @@ export class ListadoComponent implements OnInit {
   private deleteCourse(courseId: string): void {
     this.courseService.delete(courseId).subscribe({
       next: () => {
-        this.courses = this.courses.filter(c => c.id !== courseId);
-        this.filteredCourses = this.filteredCourses.filter(c => c.id !== courseId);
-
-        this.cd.detectChanges();
         this.showSuccess('Curso eliminado correctamente');
+        this.loadCourses(); 
       },
       error: () => this.showError('No se pudo eliminar el curso')
     });
   }
 
   applyFilters(): void {
-    this.filteredCourses = this.courses.filter(course =>
-      this.matchesSearch(course) && this.matchesPublished(course)
-    );
-    this.cd.detectChanges();
+    this.page = 0; 
+    this.loadCourses(); 
   }
 
   resetFilters(): void {
     this.search = '';
     this.published = 'ALL';
     this.page = 0;
-    this.filteredCourses = this.courses;
-
-    this.cd.detectChanges();
-  }
-
-  private matchesSearch(course: AdminCourseDto): boolean {
-    return !this.search ||
-      course.title.toLowerCase().includes(this.search.toLowerCase());
-  }
-
-  private matchesPublished(course: AdminCourseDto): boolean {
-    return this.published === 'ALL' ||
-      String(course.isPublished) === this.published;
-  }
-
-  changePage(newPage: number): void {
-
-    if(newPage < 0 || newPage>= this.totalPages) return;
-
-    this.page = newPage;
-    this.loadCourses();
-
-    this.cd.detectChanges();
+    this.loadCourses(); 
   }
 
   private showSuccess(message: string): void {
