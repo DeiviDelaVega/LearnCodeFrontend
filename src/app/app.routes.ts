@@ -15,6 +15,7 @@ import { CursoComponent } from './client/curso/curso';
 import { PlansComponent } from './client/plans/plans';
 import { ListadoSuscripcion } from './admin/gestionSuscripcion/listado-suscripcion/listado-suscripcion';
 import { EditarSuscripcion } from './admin/gestionSuscripcion/editar-suscripcion/editar-suscripcion';
+import { ContentManagerComponent } from './admin/gestionCurso/content-manager/content-manager.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -42,7 +43,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: HomeAdmin },
-
+      { path: 'gestionCurso/contenido/:id', component: ContentManagerComponent },
       { path: 'gestionCliente', component: ListadoClienteComponent },
       { path: 'gestionCliente/editar/:email', component: EditarClienteComponent },
 
