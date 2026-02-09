@@ -14,6 +14,7 @@ export class DashboardComponent implements OnInit {
   isDarkMode: boolean = false;
   userName = 'Administrador';
   userPhoto = '';
+  mobileMenuOpen = false;
 
   constructor(
     private router: Router,
@@ -28,6 +29,14 @@ export class DashboardComponent implements OnInit {
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
+  }
+
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.mobileMenuOpen = false;
   }
 
   logout() {

@@ -34,6 +34,7 @@ export class EditarSuscripcion implements OnInit {
   mostrarConfirmacion = false;
   mostrarExito = false;
   mostrarError = false;
+  estadoOriginal!: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -53,6 +54,7 @@ export class EditarSuscripcion implements OnInit {
     ).subscribe({
       next: (data) => {
         this.suscripcion = { ...data };
+        this.estadoOriginal = this.suscripcion.status;
         this.cd.detectChanges();
       },
       error: () => this.mostrarError = true

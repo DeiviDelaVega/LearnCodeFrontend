@@ -97,8 +97,8 @@
                         </select>
                     </div>
 
-                    <p *ngIf="suscripcion.status === 'CANCELED'" class="text-xs text-red-500 mt-2 px-1">
-                        ⚠ Al cancelar, la suscripción finalizará hoy
+                    <p *ngIf="suscripcion.status === 'CANCELED' && estadoOriginal !== 'CANCELED'" class="text-xs text-red-500 mt-2 px-1">
+                        Al cancelar, la suscripción finalizará hoy
                     </p>
                 </div>
 
