@@ -38,31 +38,24 @@ export class ListadoClienteComponent implements OnInit {
     let params = new HttpParams()
       .set('page', this.page.toString())
       .set('size', this.size.toString())
-      .set('role', 'USER');
+      .set('role', 'USER')
+      .set('search', this.search || '')
+      .set('status', this.status || 'ALL');
 
-    if (this.search) {
-      params = params.set('search', this.search);
-    } else {
-      params = params.set('search', '');
-    }
+    this.http.get<any>(this.apiUrl, { params }).subscribe(resp => {
 
-    if (this.status !== 'ALL') {
-      params = params.set('status', this.status);
-    } else {
-      params = params.set('status', 'ALL');
-    }
-
-    
-    this.http.get<any>(this.apiUrl, { params }).subscribe((resp) => {
-      this.clientes = resp.clientes.map((c: any) => ({
+      this.clientes = resp.content.map((c: any) => ({
         ...c,
         photo: c.photo || ''
       }));
+
       this.totalPages = resp.totalPages;
-      this.page = resp.currentPage;
+      this.page = resp.number;
+
       this.cd.detectChanges();
     });
   }
+
 
   resetFiltros() {
     this.search = '';

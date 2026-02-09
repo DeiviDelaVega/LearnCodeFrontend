@@ -41,11 +41,15 @@ export class EditarClienteComponent implements OnInit {
 
   cargarCliente() {
     this.http.get<any>(
-      `http://localhost:8080/api/admin/gestionCliente?search=${this.email}`
-    ).subscribe(res => {
-      const data = res.clientes[0];
-      this.cliente = { ...data };
-      this.cd.detectChanges();
+      `http://localhost:8080/api/admin/gestionCliente/${encodeURIComponent(this.email)}`
+    ).subscribe({
+      next: (data) => {
+        this.cliente = { ...data };
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar cliente', err);
+      }
     });
   }
 
