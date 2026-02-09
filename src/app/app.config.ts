@@ -4,6 +4,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { routes } from './app.routes';
 import { authInterceptor } from './auth/auth.interceptor';
+import { provideAnimations } from '@angular/platform-browser/animations'; 
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -11,6 +12,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([authInterceptor])
     ),
-    importProvidersFrom(FormsModule)
+    importProvidersFrom(FormsModule),
+    provideAnimations()
   ]
 };
