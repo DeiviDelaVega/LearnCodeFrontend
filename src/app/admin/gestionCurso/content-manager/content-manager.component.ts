@@ -1,105 +1,163 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { trigger, transition, style, animate } from '@angular/animations';
 import Swal from 'sweetalert2';
-
-// Ahora sí encontrará el archivo si lo moviste a src/app/service/
 import { AdminContentService, CourseModule } from '../../../service/AdminContentService';
 @Component({
   selector: 'app-content-manager',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './content-manager.component.html',
-  styleUrls: ['./content-manager.component.scss']
+  styleUrls: ['./content-manager.component.scss'],
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(5px)' }),
+        animate('200ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
 })
 export class ContentManagerComponent implements OnInit {
 
   private route = inject(ActivatedRoute);
   private contentService = inject(AdminContentService);
   private sanitizer = inject(DomSanitizer);
+  private cd = inject(ChangeDetectorRef);
+  private zone = inject(NgZone); // SOLUCIÓN: Inyectamos NgZone
 
   courseId: string = '';
   modules: CourseModule[] = [];
   
-  // Estado de la UI
   currentModule: CourseModule | null = null;
   pdfUrl: SafeResourceUrl | null = null;
   isLoadingPdf = false;
+  hasAnyContent = false;
+  activeDropdownId: string | null = null;
 
-  // Modales
   showModuleModal = false;
   showUploadModal = false;
   
-  // Datos para formularios
   isEditing = false;
   moduleForm = { title: '' };
   selectedFile: File | null = null;
+  previewPdfUrl: SafeResourceUrl | null = null;
 
   ngOnInit() {
     this.courseId = this.route.snapshot.paramMap.get('id') || '';
-    this.loadModules();
+    this.loadModules(true);
   }
 
-  loadModules() {
-    // TIPADO AGREGADO: (data: CourseModule[])
-    this.contentService.getModulesByCourse(this.courseId).subscribe((data: CourseModule[]) => {
-      this.modules = data;
-      
-      // Si ya teníamos un módulo seleccionado, actualizamos su referencia para ver los cambios (ej. nuevo archivo)
-      if (this.currentModule) {
-        const found = this.modules.find(m => m.id === this.currentModule!.id);
-        if (found) {
-          this.currentModule = found;
-          // Si el módulo actualizado ya no tiene archivos, limpiamos el visor
-          if (!found.files || found.files.length === 0) {
-            this.pdfUrl = null;
+  loadModules(isInitialLoad = false) {
+    this.contentService.getModulesByCourse(this.courseId).subscribe({
+      next: (data: CourseModule[]) => {
+        // Ejecutamos dentro de la zona de Angular para forzar el repintado
+        this.zone.run(() => {
+          this.modules = data;
+          this.hasAnyContent = this.modules.some(m => m.files && m.files.length > 0);
+
+          if (isInitialLoad && this.hasAnyContent) {
+            // BUSCAR AUTOMÁTICAMENTE EL PRIMER MÓDULO CON PDF
+            const firstWithFile = this.modules.find(m => m.files && m.files.length > 0);
+            if (firstWithFile) {
+              this.selectModule(firstWithFile);
+            }
+          } 
+          else if (this.currentModule) {
+            // Refrescar el módulo actual si ya estaba seleccionado
+            const refreshed = this.modules.find(m => m.id === this.currentModule!.id);
+            if (refreshed) {
+              this.currentModule = refreshed;
+              // Si acabamos de subir un archivo y no se ve, cargarlo
+              if (refreshed.files && refreshed.files.length > 0 && !this.pdfUrl) {
+                  this.loadPdf(refreshed.files[0].id);
+              }
+            }
           }
-        }
-      } 
-      // Si no hay nada seleccionado, seleccionamos el primero por defecto
-      else if (this.modules.length > 0) {
-        this.selectModule(this.modules[0]);
-      }
+          
+          this.cd.markForCheck(); // Marcar para detección
+        });
+      },
+      error: () => console.error('Error cargando módulos')
     });
   }
 
   selectModule(module: CourseModule) {
-    this.currentModule = module;
-    this.pdfUrl = null;
+    this.zone.run(() => {
+      this.currentModule = module;
+      this.pdfUrl = null; // Resetear para mostrar loader si cambia
+      this.activeDropdownId = null;
 
-    // Si el módulo tiene archivo, cargarlo
-    if (module.files && module.files.length > 0) {
-      this.loadPdf(module.files[0].id);
-    }
+      if (module.files && module.files.length > 0) {
+        this.loadPdf(module.files[0].id);
+      } else {
+        this.isLoadingPdf = false; // Asegurar que no se quede el spinner
+      }
+    });
   }
 
   loadPdf(fileId: string) {
     this.isLoadingPdf = true;
-    // TIPADO AGREGADO: (res: any)
+    this.cd.detectChanges(); // Mostrar spinner YA
+
     this.contentService.getFileContent(fileId).subscribe({
       next: (res: any) => {
-        const byteCharacters = atob(res.base64);
+        this.zone.run(() => {
+          const url = this.base64ToBlobUrl(res.base64);
+          this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+          this.isLoadingPdf = false;
+          this.cd.markForCheck();
+        });
+      },
+      error: () => {
+        this.zone.run(() => {
+          this.isLoadingPdf = false;
+          Swal.fire('Error', 'No se pudo cargar el PDF', 'error');
+        });
+      }
+    });
+  }
+
+  // TrackBy para evitar parpadeos en la lista (Performance)
+  trackByFn(index: number, item: CourseModule) {
+    return item.id; 
+  }
+
+  // --- Helpers y UI ---
+
+  toggleDropdown(moduleId: string, event: Event) {
+    event.stopPropagation();
+    if (this.activeDropdownId === moduleId) {
+      this.activeDropdownId = null;
+    } else {
+      this.activeDropdownId = moduleId;
+    }
+  }
+
+  closeDropdowns() {
+    this.activeDropdownId = null;
+  }
+
+  private base64ToBlobUrl(base64: string): string {
+    try {
+        const byteCharacters = atob(base64);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
           byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        
-        this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-        this.isLoadingPdf = false;
-      },
-      error: () => {
-        this.isLoadingPdf = false;
-        Swal.fire('Error', 'No se pudo cargar el PDF', 'error');
-      }
-    });
+        return URL.createObjectURL(blob);
+    } catch (e) {
+        console.error("Error convirtiendo base64", e);
+        return '';
+    }
   }
 
-  // --- Lógica de Módulos ---
+  // --- CRUD Módulos ---
 
   openCreateModule() {
     if (this.modules.length >= 5) {
@@ -116,68 +174,83 @@ export class ContentManagerComponent implements OnInit {
     this.currentModule = module;
     this.moduleForm = { title: module.title };
     this.showModuleModal = true;
+    this.activeDropdownId = null;
   }
 
   saveModule() {
     if (!this.moduleForm.title.trim()) return;
 
-    if (this.isEditing && this.currentModule) {
-      // Editar
-      // TIPADO AGREGADO: () => void
-      this.contentService.updateModule(this.currentModule.id, this.moduleForm.title)
-        .subscribe(() => {
-          this.showModuleModal = false;
-          this.loadModules();
-          Swal.fire('Actualizado', 'Módulo editado correctamente', 'success');
-        });
-    } else {
-      // Crear
-      const nextOrder = this.modules.length + 1;
-      this.contentService.createModule(this.courseId, this.moduleForm.title, nextOrder)
-        .subscribe(() => {
-          this.showModuleModal = false;
-          this.loadModules();
-          Swal.fire('Creado', 'Módulo creado correctamente', 'success');
-        });
-    }
-  }
+    const request = this.isEditing 
+      ? this.contentService.updateModule(this.currentModule!.id, this.moduleForm.title)
+      : this.contentService.createModule(this.courseId, this.moduleForm.title, this.modules.length + 1);
 
-  deleteModule(moduleId: string) {
-    Swal.fire({
-      title: '¿Eliminar módulo?',
-      text: 'Se eliminará también el PDF asociado.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.contentService.deleteModule(moduleId).subscribe(() => {
-          this.currentModule = null;
-          this.pdfUrl = null;
-          this.loadModules();
-          Swal.fire('Eliminado', 'Módulo eliminado', 'success');
+    request.subscribe({
+      next: () => {
+        this.zone.run(() => {
+            this.showModuleModal = false;
+            this.loadModules(); // Recargar lista
+            Swal.fire({
+                icon: 'success',
+                title: this.isEditing ? 'Actualizado' : 'Creado',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
         });
       }
     });
   }
 
-  // --- Lógica de Archivos ---
+  deleteModule(moduleId: string) {
+    this.activeDropdownId = null;
+    Swal.fire({
+      title: '¿Eliminar módulo?',
+      text: 'Se perderá el contenido asociado.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.contentService.deleteModule(moduleId).subscribe({
+          next: () => {
+            this.zone.run(() => {
+                // Si borramos el módulo actual, limpiar visor
+                if (this.currentModule?.id === moduleId) {
+                    this.currentModule = null;
+                    this.pdfUrl = null;
+                }
+                this.loadModules(); 
+                Swal.fire('Eliminado', '', 'success');
+            });
+          }
+        });
+      }
+    });
+  }
+
+  // --- Archivos ---
 
   openUploadModal(module: CourseModule) {
     this.currentModule = module;
     this.selectedFile = null;
+    this.previewPdfUrl = null;
     this.showUploadModal = true;
+    this.activeDropdownId = null;
   }
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
       if (file.type !== 'application/pdf') {
-        Swal.fire('Formato incorrecto', 'Solo se permiten archivos PDF', 'error');
+        Swal.fire('Formato incorrecto', 'Solo PDF', 'error');
         return;
       }
       this.selectedFile = file;
+      const url = URL.createObjectURL(file);
+      this.previewPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
   }
 
@@ -186,45 +259,35 @@ export class ContentManagerComponent implements OnInit {
 
     Swal.fire({
       title: 'Subiendo...',
-      didOpen: () => Swal.showLoading()
+      didOpen: () => Swal.showLoading(),
+      allowOutsideClick: false
     });
 
     this.contentService.uploadFile(this.currentModule.id, this.selectedFile).subscribe({
       next: () => {
         Swal.close();
-        this.showUploadModal = false;
-        Swal.fire('Éxito', 'PDF cargado correctamente', 'success');
-        
-        // Recargar módulos y si el actual es el que subimos, recargar su PDF
-        this.loadModules();
-        if (this.currentModule) {
-           // Pequeño hack para forzar recarga visual si es necesario, 
-           // aunque loadModules ya actualiza la referencia
-        }
+        this.zone.run(() => {
+            this.showUploadModal = false;
+            
+            // Carga inmediata en visor principal
+            const instantUrl = URL.createObjectURL(this.selectedFile!);
+            this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(instantUrl);
+            
+            this.loadModules();
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Contenido actualizado',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        });
       },
       error: () => {
         Swal.close();
-        Swal.fire('Error', 'No se pudo subir el archivo', 'error');
-      }
-    });
-  }
-
-  // IMPLEMENTACIÓN DE DELETE FILE
-  deleteFile(fileId: string) {
-    Swal.fire({
-      title: '¿Eliminar PDF?',
-      text: 'Esta acción no se puede deshacer.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.contentService.deleteFile(fileId).subscribe(() => {
-          Swal.fire('Eliminado', 'El archivo ha sido eliminado', 'success');
-          this.pdfUrl = null; // Limpiar visor
-          this.loadModules(); // Actualizar lista
-        });
+        Swal.fire('Error', 'Fallo en la subida', 'error');
       }
     });
   }

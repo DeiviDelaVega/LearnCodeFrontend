@@ -6,14 +6,14 @@ export interface ModuleFile {
   id: string;
   fileName: string;
   mimeType: string;
-  base64?: string; // Vendrá opcional al listar, obligatorio al ver detalle
+  base64?: string;
 }
 
 export interface CourseModule {
   id: string;
   order: number;
   title: string;
-  files: ModuleFile[]; // En tu caso, lógica de 1 archivo por módulo
+  files: ModuleFile[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -22,7 +22,6 @@ export class AdminContentService {
 
   constructor(private http: HttpClient) {}
 
-  // Obtener estructura del curso
   getModulesByCourse(courseId: string): Observable<CourseModule[]> {
     return this.http.get<CourseModule[]>(`${this.apiUrl}/course/${courseId}`);
   }
@@ -42,10 +41,9 @@ export class AdminContentService {
   uploadFile(moduleId: string, file: File): Observable<void> {
     return new Observable(observer => {
       const reader = new FileReader();
-      reader.readAsDataURL(file); // Convertir a Base64
+      reader.readAsDataURL(file);
       reader.onload = () => {
         const base64Full = reader.result as string;
-        // Quitamos el prefijo "data:application/pdf;base64," para enviar solo el string
         const base64 = base64Full.split(',')[1]; 
         
         const payload = {
@@ -63,7 +61,6 @@ export class AdminContentService {
     });
   }
 
-  // Descargar/Ver archivo (trae el Base64)
   getFileContent(fileId: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/file/${fileId}`);
   }

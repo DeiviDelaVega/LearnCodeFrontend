@@ -16,7 +16,7 @@ import { PlansComponent } from './client/plans/plans';
 import { ListadoSuscripcion } from './admin/gestionSuscripcion/listado-suscripcion/listado-suscripcion';
 import { EditarSuscripcion } from './admin/gestionSuscripcion/editar-suscripcion/editar-suscripcion';
 import { ContentManagerComponent } from './admin/gestionCurso/content-manager/content-manager.component';
-
+import { ClientViewerComponent } from './client/curso/viewer/client-viewer.component';
 export const routes: Routes = [
   { path: '', component: LoginComponent },
   {
@@ -26,9 +26,8 @@ export const routes: Routes = [
   children: [
 
     { path: '', redirectTo: 'home', pathMatch: 'full' },
-
     { path: 'home', component: HomeClient },
-
+    { path: 'curso/contenido/:id', component: ClientViewerComponent },
     { path: 'curso', component: CursoComponent },
     { path: 'plans', component: PlansComponent },
     { path: 'curso', component: CursoComponent }

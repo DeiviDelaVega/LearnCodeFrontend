@@ -216,7 +216,7 @@ export class CursoComponent implements OnInit {
     };
   }
 
-  onCourseClick(course: ClientCourse): void {
+onCourseClick(course: ClientCourse): void {
     if (!this.canAccessCourse(course)) {
       this.selectedCourse = course;
       this.showPricingModal = true;
@@ -225,7 +225,7 @@ export class CursoComponent implements OnInit {
 
     console.log("✅ Acceso permitido");
     console.log('✅ Entrar al curso:', course.title);
-    // this.router.navigate(['/curso', course.id]);
+    this.router.navigate(['/client/curso/contenido', course.id]);
   }
 
   goToPlans(): void {
