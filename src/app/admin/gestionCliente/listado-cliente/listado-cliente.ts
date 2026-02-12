@@ -19,6 +19,7 @@ export class ListadoClienteComponent implements OnInit {
   search = '';
   status = 'ALL';
   photo?: string;
+  loading = false;
 
   private apiUrl = 'http://localhost:8080/api/admin/gestionCliente';
 
@@ -28,31 +29,41 @@ export class ListadoClienteComponent implements OnInit {
     this.cargarClientes();
   }
 
-  aplicarFiltros(valor: string) {
+  aplicarFiltros() {
     this.page = 0;
-    this.search = valor;
+    this.cargarClientes();
+  }
+
+  onStatusChange() {
+    this.page = 0;
     this.cargarClientes();
   }
 
   cargarClientes() {
+    this.loading = true;
     let params = new HttpParams()
       .set('page', this.page.toString())
       .set('size', this.size.toString())
       .set('role', 'USER')
-      .set('search', this.search || '')
-      .set('status', this.status || 'ALL');
+      .set('search', this.search.trim())
+      .set('status', this.status);
 
-    this.http.get<any>(this.apiUrl, { params }).subscribe(resp => {
+    this.http.get<any>(this.apiUrl, { params }).subscribe({
+      next: (resp) => {
+        this.clientes = resp.content.map((c: any) => ({
+          ...c,
+          photo: c.photo || null
+        }));
 
-      this.clientes = resp.content.map((c: any) => ({
-        ...c,
-        photo: c.photo || ''
-      }));
+        this.totalPages = resp.totalPages;
+        this.page = resp.number;
 
-      this.totalPages = resp.totalPages;
-      this.page = resp.number;
-
-      this.cd.detectChanges();
+        this.loading = true;
+        this.cd.detectChanges();
+      },
+      error: () => {
+        this.loading = false;
+      }
     });
   }
 
@@ -68,5 +79,6 @@ export class ListadoClienteComponent implements OnInit {
     if (p < 0 || p >= this.totalPages) return;
     this.page = p;
     this.cargarClientes();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

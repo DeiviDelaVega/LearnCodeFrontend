@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ClientCourse } from '../../models/ClientCourseDto';
-import { ClientCourseService } from '../../service/CourseService';
+import { ClientCourseService } from './service/CourseService';
 import { PlanService } from '../../service/PlanService';
 
 @Component({
@@ -95,20 +95,24 @@ export class CursoComponent implements OnInit {
   }
 
   private loadCourses(): void {
-    this.courseService.getAll().subscribe({
+    this.courseService.list().subscribe({
       next: (data) => {
+        console.log("Datos crudos del servidor:", data);
 
-        // 🔥 DEBUG: ver qué está llegando del backend
+
         data.forEach(c => {
           console.log("📌 CURSO:", c.title,
             "| isFree:", c.isFree,
-            "| requiredPlanCode:", c.requiredPlanCode
+            "| requiredPlanCode:", c.requiredPlanCode,
           );
         });
+
 
         this.courses = data.map((course) => ({
           ...course,
           unlocked: this.canAccessCourse(course),
+          modulesCount: course.modulesCount || 0,
+          filesCount: course.filesCount || 0
         }));
 
         this.filteredCourses = [...this.courses];
@@ -116,6 +120,13 @@ export class CursoComponent implements OnInit {
       },
       error: (err) => {
         console.error('❌ Error cargando cursos:', err);
+
+        console.error("❌ ERROR COMPLETO:", err);
+        console.error("📌 STATUS:", err.status);
+        console.error("📌 MENSAJE:", err.message);
+        console.error("📌 ERROR BACKEND:", err.error);
+
+
       },
     });
   }
@@ -183,13 +194,11 @@ export class CursoComponent implements OnInit {
   }
 
   getCoursePlan(course: ClientCourse): string {
-  if (course.isFree) return "GRATIS";
-  const plan = course.requiredPlanCode?.trim().toUpperCase();
-  if (!plan) return "FREE";
-  return plan;
-}
-
-
+    if (course.isFree) return "GRATIS";
+    const plan = course.requiredPlanCode?.trim().toUpperCase();
+    if (!plan) return "FREE";
+    return plan;
+  }
 
   getGlowClassByIndex(index: number): string {
     const glows = [
@@ -216,7 +225,7 @@ export class CursoComponent implements OnInit {
     };
   }
 
-onCourseClick(course: ClientCourse): void {
+  onCourseClick(course: ClientCourse): void {
     if (!this.canAccessCourse(course)) {
       this.selectedCourse = course;
       this.showPricingModal = true;

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AdminCourseDto } from '../models/AdminCourseDto';
@@ -30,10 +30,21 @@ export class AdminCourseService {
     return this.http.delete<void>(`${this.endpoint}/${id}`);
   }
 
-  getPaged(page: number, size: number) {
-    return this.http.get<any>(
-      `${this.endpoint}/paged?page=${page}&size=${size}`
-    );
-  }
+  // En AdminCourseService.ts
+  getPaged(page: number, size: number, title?: string, published?: string): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
 
+    if (title && title.trim() !== '') {
+      params = params.set('title', title);
+    }
+
+    // Si es 'ALL', no enviamos el parámetro para que en Java llegue como NULL
+    if (published && published !== 'ALL') {
+      params = params.set('published', published);
+    }
+
+    return this.http.get<any>(`${this.endpoint}/paged`, { params });
+  }
 }

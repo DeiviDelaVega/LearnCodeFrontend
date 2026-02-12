@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AdminCourseService } from '../../../service/AdminCourseService';
 import { AdminCourseDto } from '../../../models/AdminCourseDto';
-
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,7 +14,6 @@ import Swal from 'sweetalert2';
   styleUrl: './listado.scss',
 })
 export class ListadoComponent implements OnInit {
-
   courses: AdminCourseDto[] = [];
   pagesArray: number[] = [];
 
@@ -23,7 +21,8 @@ export class ListadoComponent implements OnInit {
   published: string = 'ALL';
   page: number = 0;
   totalPages: number = 0;
-  pageSize: number = 4;
+  pageSize: number = 5; // Aumentado ligeramente
+  loading: boolean = false;
 
   constructor(
     private readonly router: Router,
@@ -36,82 +35,84 @@ export class ListadoComponent implements OnInit {
   }
 
   loadCourses(): void {
-    this.courseService.getPaged(this.page, this.pageSize).subscribe({
-      next: (res) => {
-        this.courses = res.content;                  
-        this.page = res.currentPage ?? 0;            
-        this.totalPages = res.totalPages ?? 1;      
-        this.pagesArray = Array.from({ length: this.totalPages }, (_, i) => i);
-        this.cd.detectChanges();                    
-      },
-      error: () => this.showError('Error cargando cursos paginados')
+    this.loading = true;
+
+    this.courseService.getPaged(this.page, this.pageSize, this.search, this.published)
+      .subscribe({
+        next: (res) => {
+          this.courses = res.content;
+          this.totalPages = res.totalPages;
+          this.pagesArray = Array.from({ length: this.totalPages }, (_, i) => i);
+          this.loading = false;
+          this.cd.detectChanges();
+        },
+      error: () => {
+        this.loading = false;
+        this.cd.detectChanges(); 
+      }
     });
+  }
+
+  onPublishedChange(): void {
+    this.page = 0;
+    this.loadCourses();
   }
 
   changePage(newPage: number): void {
     if (newPage < 0 || newPage >= this.totalPages) return;
     this.page = newPage;
-    this.loadCourses(); 
-  }
+    this.loadCourses();
 
-  viewDetail(courseId: string): void {
-    this.router.navigate(['/admin/gestionCurso/detalle', courseId]);
-  }
-
-  confirmDelete(courseId: string): void {
-    Swal.fire({
-      title: '¿Estás segura?',
-      text: 'Este curso será eliminado permanentemente',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#64748b',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then(result => {
-      if (result.isConfirmed) {
-        this.deleteCourse(courseId);
-      }
-    });
-  }
-
-  private deleteCourse(courseId: string): void {
-    this.courseService.delete(courseId).subscribe({
-      next: () => {
-        this.showSuccess('Curso eliminado correctamente');
-        this.loadCourses(); 
-      },
-      error: () => this.showError('No se pudo eliminar el curso')
-    });
+    this.cd.detectChanges();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   applyFilters(): void {
-    this.page = 0; 
-    this.loadCourses(); 
+    this.page = 0;
+    this.loadCourses();
   }
 
   resetFilters(): void {
     this.search = '';
     this.published = 'ALL';
     this.page = 0;
-    this.loadCourses(); 
+    this.loadCourses();
+
+    this.cd.detectChanges();
+  }
+
+  confirmDelete(courseId: string): void {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      background: '#1e293b',
+      color: '#fff'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.courseService.delete(courseId).subscribe({
+          next: () => {
+            this.showSuccess('Curso eliminado');
+            this.loadCourses();
+
+            this.cd.detectChanges();
+          },
+          error: () => this.showError('Error al eliminar')
+        });
+      }
+    });
   }
 
   private showSuccess(message: string): void {
-    Swal.fire({
-      icon: 'success',
-      title: 'Éxito',
-      text: message,
-      timer: 1500,
-      showConfirmButton: false
-    });
+    Swal.fire({ icon: 'success', title: message, timer: 1500, showConfirmButton: false });
   }
 
   private showError(message: string): void {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: message
-    });
+    Swal.fire({ icon: 'error', title: 'Error', text: message });
   }
 }
