@@ -18,7 +18,8 @@ export class ClientCourseService {
     if (title) {
       params = params.set('title', title);
     }
-
+    
+    console.log("🔥 URL:", this.apiUrl);
     return this.http.get<ClientCourse[]>(this.apiUrl, { params });
   }
 

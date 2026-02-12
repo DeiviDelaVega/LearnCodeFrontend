@@ -8,4 +8,7 @@ export interface ClientCourse {
   isFree: boolean;
   requiredPlanCode?: string | null;
   unlocked?: boolean;
+
+  modulesCount: number;
+  filesCount:number;
 }

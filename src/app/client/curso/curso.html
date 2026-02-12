@@ -118,24 +118,26 @@
 
           <!-- INFO -->
           <div class="flex items-center justify-center gap-6 pt-6 border-t border-white/5">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-[18px] text-slate-500">
-                list_alt
-              </span>
-              <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                12 Módulos
-              </span>
-            </div>
+  
+  <div class="flex items-center gap-2" title="Módulos del curso">
+    <span class="material-symbols-outlined text-[18px] text-slate-500">
+      list_alt
+    </span>
+    <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+      {{ course.modulesCount || 0 }} Módulos
+    </span>
+  </div>
 
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-[18px] text-slate-500">
-                folder_open
-              </span>
-              <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                48 Docs
-              </span>
-            </div>
-          </div>
+  <div class="flex items-center gap-2" title="Archivos descargables">
+    <span class="material-symbols-outlined text-[18px] text-slate-500">
+      folder_open
+    </span>
+    <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+      {{ course.filesCount || 0 }} Docs
+    </span>
+  </div>
+
+</div>
 
         </div>
       </div>
