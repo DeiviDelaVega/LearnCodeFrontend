@@ -37,7 +37,7 @@
         <select [(ngModel)]="status" 
           class="appearance-none w-full h-[52px] pl-20 pr-10 bg-white/50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-700 dark:text-slate-200 font-semibold text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none cursor-pointer">
           <option value="TODO">Todos</option>
-          <option value="ACTIVE">Activo</option>
+          <option value="Activo">Activo</option>
           <option value="CANCELED">Cancelado</option>
           <option value="EXPIRED">Expirado</option>
         </select>
@@ -65,7 +65,7 @@
           <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
             <th class="px-8 py-5 text-xs uppercase tracking-widest font-bold text-slate-400">Cliente</th>
             <th class="px-8 py-5 text-xs uppercase tracking-widest font-bold text-slate-400">Plan</th>
-            <th class="px-8 py-5 text-xs uppercase tracking-widest font-bold text-slate-400">Vigencia</th>
+            <th class="px-8 py-5 text-xs uppercase tracking-widest font-bold text-slate-400">Fecha</th>
             <th class="px-8 py-5 text-xs uppercase tracking-widest font-bold text-slate-400">Estado</th>
             <th class="px-8 py-5 text-xs uppercase tracking-widest font-bold text-slate-400 text-right">Acciones</th>
           </tr>
@@ -109,14 +109,16 @@
             </td>
 
             <td class="px-8 py-5">
-              <span [ngClass]="{
-                'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400': s.status === 'ACTIVE',
-                'bg-rose-500/10 text-rose-600 dark:text-rose-400': s.status === 'CANCELED',
-                'bg-slate-500/10 text-slate-500 dark:text-slate-400': s.status === 'EXPIRED'
-              }" class="px-3 py-1 rounded-lg text-[10px] font-black tracking-wider uppercase">
-                {{ s.status }}
-              </span>
-            </td>
+  <span [ngClass]="{
+      'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400': s.status === 'ACTIVE',
+      'bg-rose-500/10 text-rose-600 dark:text-rose-400': s.status === 'CANCELED',
+      'bg-slate-500/10 text-slate-500 dark:text-slate-400': s.status === 'EXPIRED'
+    }" class="px-3 py-1 rounded-lg text-[10px] font-black tracking-wider uppercase">
+    
+    {{ etiquetasEstado[s.status] || s.status }}
+    
+  </span>
+</td>
 
             <td class="px-8 py-5 text-right">
               <a [routerLink]="['/admin/gestionSuscripcion/editar', s.id]"

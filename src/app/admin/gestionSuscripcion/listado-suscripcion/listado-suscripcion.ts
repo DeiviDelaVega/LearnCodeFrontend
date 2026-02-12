@@ -21,6 +21,19 @@ export class ListadoSuscripcion implements OnInit {
   plan = 'TODO';
   status = 'TODO';
 
+  etiquetasPlan: any = {
+    'FREE': 'Gratis',
+    'ORO': 'Oro',
+    'PLATINO': 'Platino',
+    'DIAMANTE': 'Diamante'
+  };
+
+  etiquetasEstado: any = {
+    'ACTIVE': 'Activo',
+    'CANCELED': 'Cancelado',
+    'EXPIRED': 'Expirado'
+  };
+
   private apiUrl = 'http://localhost:8080/api/admin/gestionSuscripcion';
 
   constructor(private http: HttpClient, private cd: ChangeDetectorRef) { }
