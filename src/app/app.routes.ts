@@ -17,23 +17,24 @@ import { ListadoSuscripcion } from './admin/gestionSuscripcion/listado-suscripci
 import { EditarSuscripcion } from './admin/gestionSuscripcion/editar-suscripcion/editar-suscripcion';
 import { ContentManagerComponent } from './admin/gestionCurso/content-manager/content-manager.component';
 import { ClientViewerComponent } from './client/curso/viewer/client-viewer.component';
+import { SubscriptionComponent } from './client/subscription/subscription';
+import { PaymentsHistoryComponent } from './admin/payments-history/payments-history';
+
 export const routes: Routes = [
   { path: '', component: LoginComponent },
   {
-  path: 'client',
-  component: DashboardClient,
-  canActivate: [authGuard],
-  children: [
-
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: HomeClient },
-    { path: 'curso/contenido/:id', component: ClientViewerComponent },
-    { path: 'curso', component: CursoComponent },
-    { path: 'plans', component: PlansComponent },
-    { path: 'curso', component: CursoComponent }
-
-  ]
-},
+    path: 'client',
+    component: DashboardClient,
+    canActivate: [authGuard],
+    children: [
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: 'home', component: HomeClient },
+      { path: 'curso/contenido/:id', component: ClientViewerComponent },
+      { path: 'curso', component: CursoComponent },
+      { path: 'plans', component: PlansComponent },
+      { path: 'subscription', component: SubscriptionComponent },
+    ],
+  },
   {
     path: 'admin',
     component: DashboardComponent,
@@ -52,7 +53,11 @@ export const routes: Routes = [
       { path: 'gestionCurso/detalle/:id', component: DetailCourse },
 
       { path: 'gestionSuscripcion', component: ListadoSuscripcion },
-      { path: 'gestionSuscripcion/editar/:id', component: EditarSuscripcion }
-    ]
-  }
+      { path: 'gestionSuscripcion/editar/:id', component: EditarSuscripcion },
+      {
+        path: 'payments-history',
+        component: PaymentsHistoryComponent,
+      },
+    ],
+  },
 ];
