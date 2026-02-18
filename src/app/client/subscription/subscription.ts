@@ -3,6 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import Swal from 'sweetalert2';
+import { ChangeDetectorRef } from '@angular/core';
+
+
 
 import { SubscriptionService } from '../../service/SubscriptionService';
 
@@ -27,6 +31,7 @@ export class SubscriptionComponent implements OnInit {
   constructor(
     private service: SubscriptionService,
     private router: Router,
+    private cd: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -74,14 +79,38 @@ export class SubscriptionComponent implements OnInit {
   }
 
   cancelSubscription() {
-    if (!confirm('¿Seguro que quieres cancelar tu suscripción?')) return;
+    Swal.fire({
+      title: '¿Cancelar suscripción?',
+      text: 'Podrás perder los beneficios del plan actual.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#7c3aed',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Sí, cancelar',
+      cancelButtonText: 'No, volver',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.service.cancelMySubscription().subscribe({
+          next: () => {
+            Swal.fire({
+              title: 'Cancelada',
+              text: 'Tu suscripción fue cancelada correctamente.',
+              icon: 'success',
+              confirmButtonColor: '#7c3aed',
+            }).then(() => {
+              this.loadSubscription();
 
-    this.service.cancelMySubscription().subscribe({
-      next: () => {
-        // 🔥 Sales de la pantalla
-        this.router.navigate(['/courses']);
-      },
-      error: () => alert('Error al cancelar'),
+              setTimeout(() => {
+                this.cd.detectChanges();
+              }, 0);
+
+            });
+          },
+          error: () => {
+            Swal.fire('Error', 'No se pudo cancelar la suscripción', 'error');
+          },
+        });
+      }
     });
   }
 }
