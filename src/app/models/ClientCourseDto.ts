@@ -9,6 +9,6 @@ export interface ClientCourse {
   requiredPlanCode?: string | null;
   unlocked?: boolean;
 
-  modulesCount: number;
-  filesCount:number;
+  modulesCount?: number;
+  filesCount?:number;
 }

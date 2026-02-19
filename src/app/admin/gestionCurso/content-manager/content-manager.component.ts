@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
 import Swal from 'sweetalert2';
 import { AdminContentService, CourseModule } from '../../../service/AdminContentService';
+
 @Component({
   selector: 'app-content-manager',
   standalone: true,
@@ -27,7 +28,7 @@ export class ContentManagerComponent implements OnInit {
   private contentService = inject(AdminContentService);
   private sanitizer = inject(DomSanitizer);
   private cd = inject(ChangeDetectorRef);
-  private zone = inject(NgZone); // SOLUCIÓN: Inyectamos NgZone
+  private zone = inject(NgZone);
 
   courseId: string = '';
   modules: CourseModule[] = [];
@@ -54,31 +55,26 @@ export class ContentManagerComponent implements OnInit {
   loadModules(isInitialLoad = false) {
     this.contentService.getModulesByCourse(this.courseId).subscribe({
       next: (data: CourseModule[]) => {
-        // Ejecutamos dentro de la zona de Angular para forzar el repintado
         this.zone.run(() => {
           this.modules = data;
           this.hasAnyContent = this.modules.some(m => m.files && m.files.length > 0);
 
           if (isInitialLoad && this.hasAnyContent) {
-            // BUSCAR AUTOMÁTICAMENTE EL PRIMER MÓDULO CON PDF
             const firstWithFile = this.modules.find(m => m.files && m.files.length > 0);
             if (firstWithFile) {
               this.selectModule(firstWithFile);
             }
           } 
           else if (this.currentModule) {
-            // Refrescar el módulo actual si ya estaba seleccionado
             const refreshed = this.modules.find(m => m.id === this.currentModule!.id);
             if (refreshed) {
               this.currentModule = refreshed;
-              // Si acabamos de subir un archivo y no se ve, cargarlo
               if (refreshed.files && refreshed.files.length > 0 && !this.pdfUrl) {
                   this.loadPdf(refreshed.files[0].id);
               }
             }
           }
-          
-          this.cd.markForCheck(); // Marcar para detección
+          this.cd.markForCheck();
         });
       },
       error: () => console.error('Error cargando módulos')
@@ -88,20 +84,20 @@ export class ContentManagerComponent implements OnInit {
   selectModule(module: CourseModule) {
     this.zone.run(() => {
       this.currentModule = module;
-      this.pdfUrl = null; // Resetear para mostrar loader si cambia
+      this.pdfUrl = null;
       this.activeDropdownId = null;
 
       if (module.files && module.files.length > 0) {
         this.loadPdf(module.files[0].id);
       } else {
-        this.isLoadingPdf = false; // Asegurar que no se quede el spinner
+        this.isLoadingPdf = false;
       }
     });
   }
 
   loadPdf(fileId: string) {
     this.isLoadingPdf = true;
-    this.cd.detectChanges(); // Mostrar spinner YA
+    this.cd.detectChanges();
 
     this.contentService.getFileContent(fileId).subscribe({
       next: (res: any) => {
@@ -121,12 +117,9 @@ export class ContentManagerComponent implements OnInit {
     });
   }
 
-  // TrackBy para evitar parpadeos en la lista (Performance)
   trackByFn(index: number, item: CourseModule) {
     return item.id; 
   }
-
-  // --- Helpers y UI ---
 
   toggleDropdown(moduleId: string, event: Event) {
     event.stopPropagation();
@@ -157,8 +150,6 @@ export class ContentManagerComponent implements OnInit {
     }
   }
 
-  // --- CRUD Módulos ---
-
   openCreateModule() {
     if (this.modules.length >= 5) {
       Swal.fire('Límite alcanzado', 'Solo puedes crear hasta 5 módulos', 'warning');
@@ -181,14 +172,14 @@ export class ContentManagerComponent implements OnInit {
     if (!this.moduleForm.title.trim()) return;
 
     const request = this.isEditing 
-      ? this.contentService.updateModule(this.currentModule!.id, this.moduleForm.title)
+      ? this.contentService.updateModule(this.currentModule!.id!, this.moduleForm.title)
       : this.contentService.createModule(this.courseId, this.moduleForm.title, this.modules.length + 1);
 
     request.subscribe({
       next: () => {
         this.zone.run(() => {
             this.showModuleModal = false;
-            this.loadModules(); // Recargar lista
+            this.loadModules();
             Swal.fire({
                 icon: 'success',
                 title: this.isEditing ? 'Actualizado' : 'Creado',
@@ -217,7 +208,6 @@ export class ContentManagerComponent implements OnInit {
         this.contentService.deleteModule(moduleId).subscribe({
           next: () => {
             this.zone.run(() => {
-                // Si borramos el módulo actual, limpiar visor
                 if (this.currentModule?.id === moduleId) {
                     this.currentModule = null;
                     this.pdfUrl = null;
@@ -230,8 +220,6 @@ export class ContentManagerComponent implements OnInit {
       }
     });
   }
-
-  // --- Archivos ---
 
   openUploadModal(module: CourseModule) {
     this.currentModule = module;
@@ -255,7 +243,7 @@ export class ContentManagerComponent implements OnInit {
   }
 
   uploadFile() {
-    if (!this.selectedFile || !this.currentModule) return;
+    if (!this.selectedFile || !this.currentModule?.id) return;
 
     Swal.fire({
       title: 'Subiendo...',
@@ -263,32 +251,43 @@ export class ContentManagerComponent implements OnInit {
       allowOutsideClick: false
     });
 
-    this.contentService.uploadFile(this.currentModule.id, this.selectedFile).subscribe({
-      next: () => {
-        Swal.close();
-        this.zone.run(() => {
-            this.showUploadModal = false;
-            
-            // Carga inmediata en visor principal
-            const instantUrl = URL.createObjectURL(this.selectedFile!);
-            this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(instantUrl);
-            
-            this.loadModules();
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'Contenido actualizado',
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 2000
-            });
-        });
-      },
-      error: () => {
-        Swal.close();
-        Swal.fire('Error', 'Fallo en la subida', 'error');
-      }
-    });
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const base64String = result.split(',')[1];
+
+      const dto = {
+        moduleId: this.currentModule!.id!,
+        fileName: this.selectedFile!.name,
+        mimeType: this.selectedFile!.type,
+        base64: base64String
+      };
+
+      this.contentService.uploadFile(dto).subscribe({
+        next: () => {
+          Swal.close();
+          this.zone.run(() => {
+              this.showUploadModal = false;
+              const instantUrl = URL.createObjectURL(this.selectedFile!);
+              this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(instantUrl);
+              this.loadModules();
+              Swal.fire({
+                  icon: 'success',
+                  title: 'Contenido actualizado',
+                  toast: true,
+                  position: 'top-end',
+                  showConfirmButton: false,
+                  timer: 2000
+              });
+          });
+        },
+        error: () => {
+          Swal.close();
+          Swal.fire('Error', 'Fallo en la subida', 'error');
+        }
+      });
+    };
+    
+    reader.readAsDataURL(this.selectedFile);
   }
 }
