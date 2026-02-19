@@ -100,13 +100,13 @@ export class ClientViewerComponent implements OnInit {
   }
 
   markAsCompleted() {
-    if (!this.currentModule) return;
+    if (!this.currentModule?.id) return;
     
     // Optimista: Marcar visualmente ya
-    this.completedModuleIds.add(this.currentModule.id);
+    this.completedModuleIds.add(this.currentModule.id!);
     this.calculateProgress();
 
-    this.clientService.markAsCompleted(this.currentModule.id).subscribe({
+    this.clientService.markAsCompleted(this.currentModule.id!).subscribe({
         next: () => {
             Swal.fire({
                 icon: 'success',
@@ -125,7 +125,7 @@ export class ClientViewerComponent implements OnInit {
         this.progressPercentage = 0;
         return;
     }
-    const completedCount = this.modules.filter(m => this.completedModuleIds.has(m.id)).length;
+    const completedCount = this.modules.filter(m => this.completedModuleIds.has(m.id!)).length;
     this.progressPercentage = Math.round((completedCount / this.modules.length) * 100);
   }
 
