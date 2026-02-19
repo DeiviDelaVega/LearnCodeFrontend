@@ -26,7 +26,7 @@
       <div class="flex-1 overflow-y-auto custom-scrollbar px-4 space-y-2 pb-10">
         <div class="text-[10px] font-bold uppercase tracking-widest text-slate-500 px-2 mb-2">Estructura del Curso</div>
         
-        <div *ngFor="let mod of modules; let i = index; trackBy: trackByFn" [@fadeIn] class="module-item group relative mb-2">
+        <div *ngFor="let mod of modules; let i = index" [@fadeIn] class="module-item group relative mb-2">
           
           <div [class.bg-surface-dark]="currentModule?.id === mod.id"
                [class.border-primary-20]="currentModule?.id === mod.id"
@@ -44,7 +44,7 @@
               </span>
             </div>
 
-            <button (click)="toggleDropdown(mod.id, $event)" 
+            <button (click)="toggleDropdown(mod.id!, $event)" 
                     class="p-1 rounded-full text-slate-500 hover:text-white hover:bg-slate-700 transition-colors z-20">
                 <span class="material-symbols-outlined text-base">more_vert</span>
             </button>
@@ -59,7 +59,7 @@
             <button (click)="openEditModule(mod)" class="w-full flex items-center gap-2 px-4 py-3 text-[11px] text-slate-300 hover:bg-primary/10 hover:text-primary transition-colors text-left border-b border-white/5">
                 <span class="material-symbols-outlined text-sm">edit</span> Editar Nombre
             </button>
-            <button (click)="deleteModule(mod.id)" class="w-full flex items-center gap-2 px-4 py-3 text-[11px] text-red-400 hover:bg-red-500/10 transition-colors text-left">
+            <button (click)="deleteModule(mod.id!)" class="w-full flex items-center gap-2 px-4 py-3 text-[11px] text-red-400 hover:bg-red-500/10 transition-colors text-left">
                 <span class="material-symbols-outlined text-sm">delete</span> Eliminar
             </button>
           </div>

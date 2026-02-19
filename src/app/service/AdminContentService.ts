@@ -1,71 +1,81 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-export interface ModuleFile {
-  id: string;
+// Interfaz para mapear la respuesta del backend
+interface ApiResponse<T> {
+  success: boolean;
+  mensaje: string;
+  data: T;
+}
+
+// Asegúrate de tener estas interfaces exportadas o impórtalas de tus modelos
+export interface CourseModule {
+  id?: string;
+  courseId: string;
+  title: string;
+  moduleOrder: number;
+  files?: any[];
+}
+
+export interface CreateFileDTO {
+  moduleId: string;
   fileName: string;
   mimeType: string;
-  base64?: string;
+  base64: string;
 }
 
-export interface CourseModule {
-  id: string;
-  order: number;
-  title: string;
-  files: ModuleFile[];
-}
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AdminContentService {
+  
   private apiUrl = 'http://localhost:8080/api/admin/content';
 
   constructor(private http: HttpClient) {}
 
-  getModulesByCourse(courseId: string): Observable<CourseModule[]> {
-    return this.http.get<CourseModule[]>(`${this.apiUrl}/course/${courseId}`);
+  // 1. Obtener estructura
+  getModulesByCourse(courseId: string): Observable<any[]> {
+    return this.http.get<ApiResponse<any[]>>(`${this.apiUrl}/course/${courseId}`)
+      .pipe(map(res => res.data));
   }
 
+  // 2. Crear Módulo
   createModule(courseId: string, title: string, order: number): Observable<CourseModule> {
-    return this.http.post<CourseModule>(`${this.apiUrl}/module`, { courseId, title, order });
+    const body = { courseId, title, order };
+    return this.http.post<ApiResponse<CourseModule>>(`${this.apiUrl}/module`, body)
+      .pipe(map(res => res.data));
   }
 
-  updateModule(moduleId: string, title: string): Observable<CourseModule> {
-    return this.http.put<CourseModule>(`${this.apiUrl}/module/${moduleId}`, { title });
+  // 3. Eliminar Módulo
+  deleteModule(moduleId: string): Observable<string> {
+    return this.http.delete<ApiResponse<string>>(`${this.apiUrl}/module/${moduleId}`)
+      .pipe(map(res => res.data));
   }
 
-  deleteModule(moduleId: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/module/${moduleId}`);
+  // 4. Subir Archivo
+  uploadFile(dto: CreateFileDTO): Observable<string> {
+    return this.http.post<ApiResponse<string>>(`${this.apiUrl}/file`, dto)
+      .pipe(map(res => res.data));
   }
 
-  uploadFile(moduleId: string, file: File): Observable<void> {
-    return new Observable(observer => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        const base64Full = reader.result as string;
-        const base64 = base64Full.split(',')[1]; 
-        
-        const payload = {
-          moduleId,
-          fileName: file.name,
-          mimeType: file.type,
-          base64: base64
-        };
-
-        this.http.post(`${this.apiUrl}/file`, payload).subscribe({
-          next: () => { observer.next(); observer.complete(); },
-          error: (err) => observer.error(err)
-        });
-      };
-    });
-  }
-
+  // 5. Descargar/Ver Archivo
   getFileContent(fileId: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/file/${fileId}`);
+    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/file/${fileId}`)
+      .pipe(map(res => res.data));
   }
 
-  deleteFile(fileId: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/file/${fileId}`);
+  // 6. Actualizar Módulo
+  updateModule(moduleId: string, title: string): Observable<CourseModule> {
+    const body = { title };
+    return this.http.put<ApiResponse<CourseModule>>(`${this.apiUrl}/module/${moduleId}`, body)
+      .pipe(map(res => res.data));
+  }
+
+  // 7. Eliminar Archivo
+  deleteFile(fileId: string): Observable<string> {
+    return this.http.delete<ApiResponse<string>>(`${this.apiUrl}/file/${fileId}`)
+      .pipe(map(res => res.data));
   }
 }
