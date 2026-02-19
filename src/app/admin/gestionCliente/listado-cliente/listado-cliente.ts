@@ -41,6 +41,7 @@ export class ListadoClienteComponent implements OnInit {
 
   cargarClientes() {
     this.loading = true;
+
     let params = new HttpParams()
       .set('page', this.page.toString())
       .set('size', this.size.toString())
@@ -50,23 +51,26 @@ export class ListadoClienteComponent implements OnInit {
 
     this.http.get<any>(this.apiUrl, { params }).subscribe({
       next: (resp) => {
-        this.clientes = resp.content.map((c: any) => ({
+        const pageData = resp.data;
+
+        this.clientes = pageData.content.map((c: any) => ({
           ...c,
           photo: c.photo || null
         }));
 
-        this.totalPages = resp.totalPages;
-        this.page = resp.number;
+        this.totalPages = pageData.totalPages;
+        this.page = pageData.number;
 
-        this.loading = true;
+        this.loading = false;
+
         this.cd.detectChanges();
       },
+
       error: () => {
         this.loading = false;
       }
     });
   }
-
 
   resetFiltros() {
     this.search = '';

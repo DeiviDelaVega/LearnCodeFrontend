@@ -43,13 +43,16 @@ export class EditarClienteComponent implements OnInit {
     this.http.get<any>(
       `http://localhost:8080/api/admin/gestionCliente/${encodeURIComponent(this.email)}`
     ).subscribe({
-      next: (data) => {
-        this.cliente = { ...data };
+
+      next: (resp) => {
+        this.cliente = resp.data;
         this.cd.detectChanges();
       },
+
       error: (err) => {
         console.error('Error al cargar cliente', err);
       }
+
     });
   }
 
@@ -74,12 +77,12 @@ export class EditarClienteComponent implements OnInit {
       `http://localhost:8080/api/admin/gestionCliente/${encodeURIComponent(this.email)}`,
       body
     ).subscribe({
-      next: () => {
-        this.mostrarExito = true;
-        this.cd.detectChanges();
-      },
-      error: () => {
-        this.mostrarError = true;
+      next: (resp: any) => {
+        if (resp?.success === true) {
+          this.mostrarExito = true;
+        } else {
+          this.mostrarError = true;
+        }
         this.cd.detectChanges();
       }
     });
