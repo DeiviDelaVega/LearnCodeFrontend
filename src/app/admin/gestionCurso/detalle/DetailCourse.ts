@@ -30,8 +30,8 @@ export class DetailCourse implements OnInit {
   }
 
    this.courseService.getById(id).subscribe({  
-      next: (data) => {
-        this.course = data;
+      next: (res) => {
+        this.course = res.data;
         this.cd.detectChanges();        
       },
       error: () => {

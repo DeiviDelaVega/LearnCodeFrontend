@@ -25,104 +25,84 @@
 
     <form [formGroup]="form" (ngSubmit)="createCourse()" class="space-y-8">
 
-      <!-- Título del Curso -->
       <div>
-        <label class="block text-sm font-medium mb-2"
-          [ngClass]="{
+        <label class="block text-sm font-medium mb-2" [ngClass]="{
             'text-red-400': form.get('title')?.invalid && form.get('title')?.touched,
             'text-slate-400': !(form.get('title')?.invalid && form.get('title')?.touched)
           }">
           Título del Curso
         </label>
 
-        <input
-          formControlName="title"
-          class="w-full h-12 px-5 rounded-xl bg-slate-950/40 border transition-all duration-300"
-          [ngClass]="{
+        <input formControlName="title"
+          class="w-full h-12 px-5 rounded-xl text-white bg-slate-950/40 border transition-all duration-300" [ngClass]="{
             'border-red-500 focus:border-red-500 focus:ring-red-500/20':
               form.get('title')?.invalid && form.get('title')?.touched,
             'border-slate-800 focus:border-cyan-400/60 focus:ring-cyan-400/20':
               !(form.get('title')?.invalid && form.get('title')?.touched)
-          }"
-          placeholder="Ej: Angular desde cero"
-        />
+          }" placeholder="Ej: Angular desde cero" />
 
-        <!-- Mensajes de error -->
         <p *ngIf="form.get('title')?.errors?.['required'] && form.get('title')?.touched"
-           class="text-sm text-red-400 mt-2">
+          class="text-sm text-red-400 mt-2">
           El título es obligatorio.
         </p>
         <p *ngIf="form.get('title')?.errors?.['minlength'] && form.get('title')?.touched"
-           class="text-sm text-red-400 mt-2">
+          class="text-sm text-red-400 mt-2">
           Debe tener al menos 5 caracteres.
         </p>
       </div>
 
-      <!-- Subtítulo -->
       <div>
-        <label class="block text-sm font-medium mb-2"
-          [ngClass]="{
+        <label class="block text-sm font-medium mb-2" [ngClass]="{
             'text-red-400': form.get('subtitle')?.invalid && form.get('subtitle')?.touched,
             'text-slate-400': !(form.get('subtitle')?.invalid && form.get('subtitle')?.touched)
           }">
           Subtítulo
         </label>
 
-        <input
-          formControlName="subtitle"
-          class="w-full h-12 px-5 rounded-xl bg-slate-950/40 border transition-all duration-300"
-          [ngClass]="{
+        <input formControlName="subtitle"
+          class="w-full h-12 px-5 rounded-xl text-white bg-slate-950/40 border transition-all duration-300" [ngClass]="{
             'border-red-500 focus:border-red-500 focus:ring-red-500/20':
               form.get('subtitle')?.invalid && form.get('subtitle')?.touched,
             'border-slate-800 focus:border-cyan-400/60 focus:ring-cyan-400/20':
               !(form.get('subtitle')?.invalid && form.get('subtitle')?.touched)
-          }"
-          placeholder="Ej: Aprende paso a paso con proyectos reales"
-        />
+          }" placeholder="Ej: Aprende paso a paso con proyectos reales" />
 
         <p *ngIf="form.get('subtitle')?.errors?.['required'] && form.get('subtitle')?.touched"
-           class="text-sm text-red-400 mt-2">
+          class="text-sm text-red-400 mt-2">
           El subtítulo es obligatorio.
         </p>
         <p *ngIf="form.get('subtitle')?.errors?.['minlength'] && form.get('subtitle')?.touched"
-           class="text-sm text-red-400 mt-2">
+          class="text-sm text-red-400 mt-2">
           Debe tener al menos 5 caracteres.
         </p>
       </div>
 
-      <!-- Descripción -->
       <div>
-        <label class="block text-sm font-medium mb-2"
-          [ngClass]="{
+        <label class="block text-sm font-medium mb-2" [ngClass]="{
             'text-red-400': form.get('description')?.invalid && form.get('description')?.touched,
             'text-slate-400': !(form.get('description')?.invalid && form.get('description')?.touched)
           }">
           Descripción
         </label>
 
-        <textarea
-          formControlName="description"
-          rows="5"
-          class="w-full px-5 py-4 rounded-xl resize-none border transition-all"
-          [ngClass]="{
+        <textarea formControlName="description" rows="5"
+          class="w-full px-5 py-4 rounded-xl resize-none border transition-all" [ngClass]="{
             'border-red-500 focus:border-red-500 focus:ring-red-500/20':
               form.get('description')?.invalid && form.get('description')?.touched,
             'border-slate-800 focus:border-cyan-400/60 focus:ring-cyan-400/20':
               !(form.get('description')?.invalid && form.get('description')?.touched)
-          }"
-        ></textarea>
+          }"></textarea>
 
         <p *ngIf="form.get('description')?.errors?.['required'] && form.get('description')?.touched"
-           class="text-sm text-red-400 mt-2">
+          class="text-sm text-red-400 mt-2">
           La descripción es obligatoria.
         </p>
         <p *ngIf="form.get('description')?.errors?.['minlength'] && form.get('description')?.touched"
-           class="text-sm text-red-400 mt-2">
+          class="text-sm text-red-400 mt-2">
           Debe tener mínimo 20 caracteres.
         </p>
       </div>
 
-      <!-- Icono y Cover -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
         <div>
@@ -149,22 +129,22 @@
           </label>
 
           <div class="flex gap-3 items-center">
-            <input type="color" formControlName="coverUrl" class="w-12 h-11 rounded-xl cursor-pointer border bg-slate-950" />
+            <input type="color" formControlName="coverUrl"
+              class="w-12 h-11 rounded-xl cursor-pointer border bg-slate-950" />
             <input type="text" [value]="form.get('coverUrl')?.value" readonly
-  class="flex-1 h-11 px-4 rounded-xl bg-slate-950/40 border border-slate-800 text-slate-200 text-sm" />
+              class="flex-1 h-11 px-4 rounded-xl bg-slate-950/40 border border-slate-800 text-slate-200 text-sm" />
 
           </div>
         </div>
 
       </div>
 
-      <!-- Curso Gratis -->
       <div>
         <label class="block text-sm font-medium text-slate-400 mb-2">
           ¿Curso Gratis?
         </label>
 
-        <select formControlName="isFree" class="w-full h-12 px-5 rounded-xl appearance-none
+        <select formControlName="free" class="w-full h-12 px-5 rounded-xl appearance-none
           bg-slate-950/40 border border-slate-800
           text-slate-200
           focus:border-cyan-400/60 focus:ring-1 focus:ring-cyan-400/20
@@ -174,10 +154,8 @@
         </select>
       </div>
 
-      <!-- Plan requerido si no es gratuito -->
-      <div *ngIf="!form.get('isFree')?.value">
-        <label class="block text-sm font-medium mb-2"
-          [ngClass]="{
+      <div *ngIf="!form.get('free')?.value">
+        <label class="block text-sm font-medium mb-2" [ngClass]="{
             'text-red-400': form.get('requiredPlanCode')?.invalid && form.get('requiredPlanCode')?.touched,
             'text-slate-400': !(form.get('requiredPlanCode')?.invalid && form.get('requiredPlanCode')?.touched)
           }">
@@ -193,12 +171,11 @@
         </select>
 
         <p *ngIf="form.get('requiredPlanCode')?.errors?.['required'] && form.get('requiredPlanCode')?.touched"
-           class="text-sm text-red-400 mt-2">
+          class="text-sm text-red-400 mt-2">
           Debes seleccionar un plan.
         </p>
       </div>
 
-      <!-- Publicar Curso -->
       <div>
         <label class="block text-sm font-medium text-slate-400 mb-2">
           ¿Publicar Curso?
@@ -214,7 +191,6 @@
         </select>
       </div>
 
-      <!-- Botón Crear Curso -->
       <div class="pt-4">
         <button type="submit" class="w-full h-14 rounded-full font-bold text-lg
           flex items-center justify-center gap-3
@@ -231,7 +207,6 @@
 
     </form>
 
-    <!-- Botón Volver -->
     <div class="flex justify-start mt-6">
       <button type="button" (click)="volver()" class="flex items-center gap-2 px-5 py-2 rounded-full
                text-sm font-medium text-slate-400

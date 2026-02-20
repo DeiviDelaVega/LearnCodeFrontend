@@ -3,7 +3,6 @@ import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angula
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
-
 import { AdminCourseService } from '../../../service/AdminCourseService';
 import { PlanService } from '../../../service/PlanService';
 import { CloudinaryService } from '../../../service/CloudinaryService';
@@ -32,13 +31,13 @@ export class InsertCourse implements OnInit {
     private planService: PlanService,
     private router: Router
   ) {
-    // ✅ Form inicializado aquí (sin error)
+
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5)]],
       subtitle: ['', [Validators.required, Validators.minLength(5)]],
       description: ['', [Validators.required, Validators.minLength(20)]],
       coverUrl: ['#000000', Validators.required],
-      isFree: [false],
+      free: [false],
       requiredPlanCode: [''],
       isPublished: [false],
     });
@@ -46,21 +45,23 @@ export class InsertCourse implements OnInit {
 
   ngOnInit(): void {
 
-    // Planes
+
     this.planService.getPlans().subscribe({
       next: plans => {
         this.plans = plans.filter(p => p.code !== 'FREE');
       }
     });
 
-    // Validación dinámica
-    this.form.get("isFree")?.valueChanges.subscribe(isFree => {
+
+    this.form.get("free")?.valueChanges.subscribe(free => {
       const planCtrl = this.form.get("requiredPlanCode");
 
-      if (!isFree) {
-        planCtrl?.setValidators([Validators.required]);
-      } else {
+      if (free) {
         planCtrl?.clearValidators();
+        planCtrl?.setValue('FREE');
+      } 
+      else {
+        planCtrl?.setValidators([Validators.required]);
         planCtrl?.setValue('');
       }
 

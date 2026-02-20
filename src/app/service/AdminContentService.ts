@@ -2,13 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-// Interfaz para mapear la respuesta del backend
-interface ApiResponse<T> {
-  success: boolean;
-  mensaje: string;
-  data: T;
-}
+import { ApiResponse } from './response/ApiResponse';
 
 // Asegúrate de tener estas interfaces exportadas o impórtalas de tus modelos
 export interface CourseModule {
