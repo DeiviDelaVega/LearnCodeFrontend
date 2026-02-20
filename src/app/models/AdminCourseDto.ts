@@ -5,8 +5,8 @@ export interface AdminCourseDto {
   description: string;
   iconUrl: string;
   coverUrl: string;
-  isFree: boolean;
-  requiredPlanCode: string;
-  isPublished: boolean;
+  free: boolean;
+  requiredPlanCode: string | null;
+  published: boolean;
   createdAt: string;        
 }

@@ -11,17 +11,17 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './listado.html',
-  styleUrl: './listado.scss',
+  styleUrls: ['./listado.scss'],
 })
 export class ListadoComponent implements OnInit {
   courses: AdminCourseDto[] = [];
   pagesArray: number[] = [];
 
   search: string = '';
-  published: string = 'ALL';
+  isPublished: string = 'ALL';
   page: number = 0;
   totalPages: number = 0;
-  pageSize: number = 5; // Aumentado ligeramente
+  pageSize: number = 5;
   loading: boolean = false;
 
   constructor(
@@ -37,20 +37,24 @@ export class ListadoComponent implements OnInit {
   loadCourses(): void {
     this.loading = true;
 
-    this.courseService.getPaged(this.page, this.pageSize, this.search, this.published)
+    let publishedFilter: string | undefined;
+    if (this.isPublished === 'true') publishedFilter = 'true';
+    else if (this.isPublished === 'false') publishedFilter = 'false';
+
+    this.courseService.getPaged(this.page, this.pageSize, this.search, publishedFilter)
       .subscribe({
         next: (res) => {
-          this.courses = res.content;
-          this.totalPages = res.totalPages;
+          this.courses = res.data.content;
+          this.totalPages = res.data.totalPages;
           this.pagesArray = Array.from({ length: this.totalPages }, (_, i) => i);
           this.loading = false;
           this.cd.detectChanges();
         },
-      error: () => {
-        this.loading = false;
-        this.cd.detectChanges(); 
-      }
-    });
+        error: () => {
+          this.loading = false;
+          this.cd.detectChanges();
+        }
+      });
   }
 
   onPublishedChange(): void {
@@ -62,7 +66,6 @@ export class ListadoComponent implements OnInit {
     if (newPage < 0 || newPage >= this.totalPages) return;
     this.page = newPage;
     this.loadCourses();
-
     this.cd.detectChanges();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -74,10 +77,9 @@ export class ListadoComponent implements OnInit {
 
   resetFilters(): void {
     this.search = '';
-    this.published = 'ALL';
+    this.isPublished = 'ALL';
     this.page = 0;
     this.loadCourses();
-
     this.cd.detectChanges();
   }
 
@@ -99,7 +101,6 @@ export class ListadoComponent implements OnInit {
           next: () => {
             this.showSuccess('Curso eliminado');
             this.loadCourses();
-
             this.cd.detectChanges();
           },
           error: () => this.showError('Error al eliminar')

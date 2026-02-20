@@ -25,7 +25,6 @@
 
     <form [formGroup]="form" (ngSubmit)="updateCourse()" class="space-y-8">
 
-      <!-- Título -->
       <div>
         <label class="block text-sm font-medium mb-2"
           [ngClass]="{
@@ -47,7 +46,6 @@
         </p>
       </div>
 
-      <!-- Subtítulo -->
       <div>
         <label class="block text-sm font-medium mb-2"
           [ngClass]="{
@@ -73,7 +71,6 @@
         </p>
       </div>
 
-      <!-- Descripción -->
       <div>
         <label class="block text-sm font-medium mb-2"
           [ngClass]="{
@@ -93,7 +90,6 @@
         </p>
       </div>
 
-      <!-- Icono y Cover -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
         <div>
@@ -130,7 +126,7 @@
 
       </div>
 
-      <!-- Curso Gratis -->
+       <!-- 
       <div>
         <label class="block text-sm font-medium mb-2"
           [ngClass]="{
@@ -149,9 +145,10 @@
           <option [ngValue]="false">No, requiere plan</option>
         </select>
       </div>
+    -->
 
-      <!-- Plan requerido -->
-      <div *ngIf="!form.get('isFree')?.value">
+
+      <div *ngIf="!form.get('free')?.value">
         <label class="block text-sm font-medium mb-2"
           [ngClass]="{
             'text-red-400': form.get('requiredPlanCode')?.invalid && form.get('requiredPlanCode')?.touched,
@@ -159,6 +156,7 @@
           }">
           Plan requerido
         </label>
+         <!-- 
         <select formControlName="requiredPlanCode"
           [ngClass]="{
             'border-red-500 focus:border-red-500 focus:ring-red-500/20': form.get('requiredPlanCode')?.invalid && form.get('requiredPlanCode')?.touched,
@@ -167,13 +165,39 @@
           class="w-full h-12 px-5 rounded-xl appearance-none bg-slate-950/40 text-slate-200 transition-all cursor-pointer">
           <option *ngFor="let plan of plans" [value]="plan.code">{{ plan.name }}</option>
         </select>
+
+----
+
+        <select formControlName="requiredPlanCode"
+          class="w-full h-12 px-5 rounded-xl bg-slate-950/40 text-slate-200 transition-all cursor-pointer">
+    <option *ngFor="let plan of plans" 
+            [value]="plan.code"
+            [hidden]="plan.code === 'FREE' && !form.get('isFree')?.value">
+      {{ plan.name }}
+    </option>
+  </select>-->
+
+  <select formControlName="requiredPlanCode"
+  class="w-full h-12 px-5 rounded-xl bg-slate-950/40 text-slate-200 transition-all cursor-pointer">
+
+  <option value="FREE">Acceso Libre</option>
+
+  <ng-container *ngFor="let plan of plans">
+    <option *ngIf="plan.code !== 'FREE'" [value]="plan.code">
+      {{ plan.name }}
+    </option>
+  </ng-container>
+
+</select>
+
         <p *ngIf="form.get('requiredPlanCode')?.errors?.['required'] && form.get('requiredPlanCode')?.touched"
            class="text-sm text-red-400 mt-2">
           Debes seleccionar un plan.
         </p>
+
+        
       </div>
 
-      <!-- Publicar Curso -->
       <div>
         <label class="block text-sm font-medium mb-2"
           [ngClass]="{
@@ -188,12 +212,11 @@
             'border-slate-800 focus:border-cyan-400/60 focus:ring-cyan-400/20': !(form.get('isPublished')?.invalid && form.get('isPublished')?.touched)
           }"
           class="w-full h-12 px-5 rounded-xl appearance-none bg-slate-950/40 text-slate-200 transition-all cursor-pointer">
-          <option [ngValue]="true">Sí, publicar ahora</option>
-          <option [ngValue]="false">No, guardar como borrador</option>
+          <option [ngValue]="true">Si, Publicar ahora</option>
+          <option [ngValue]="false">No, Guardar como borrador</option>
         </select>
       </div>
 
-      <!-- Botones -->
       <div class="pt-4 flex flex-col md:flex-row gap-4">
         <button type="submit" class="flex-1 h-14 rounded-full font-bold text-lg
           flex items-center justify-center gap-3
@@ -206,8 +229,6 @@
           <span class="material-symbols-outlined font-bold">edit</span>
           Actualizar Curso
         </button>
-
-        
       </div>
 
     </form>

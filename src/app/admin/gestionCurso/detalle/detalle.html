@@ -55,11 +55,11 @@
 
       <div class="md:col-span-1">
         <label class="text-slate-400 text-sm mb-2 block">¿Curso Gratis?</label>
-        <input [value]="course.isFree ? 'Sí, es gratuito' : 'No, es de pago'" disabled
+        <input [value]="course.free ? 'Sí, es gratuito' : 'No, es de pago'" disabled
                class="w-full h-12 px-5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-300" />
       </div>
 
-      <div class="md:col-span-1" *ngIf="!course.isFree">
+      <div class="md:col-span-1" *ngIf="!course.free">
         <label class="text-slate-400 text-sm mb-2 block">Plan requerido</label>
         <input [value]="course.requiredPlanCode" disabled
                class="w-full h-12 px-5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-300 font-mono text-cyan-400" />
@@ -68,8 +68,8 @@
       <div class="md:col-span-1">
         <label class="text-slate-400 text-sm mb-2 block">Estado de Publicación</label>
         <div class="flex items-center gap-3 h-12 px-5 rounded-xl bg-slate-950/60 border border-slate-800">
-           <span class="flex h-2 w-2 rounded-full" [ngClass]="course.isPublished ? 'bg-green-500' : 'bg-red-500'"></span>
-           <span class="text-slate-300">{{ course.isPublished ? 'Publicado' : 'Borrador' }}</span>
+           <span class="flex h-2 w-2 rounded-full" [ngClass]="course.published ? 'bg-green-500' : 'bg-red-500'"></span>
+           <span class="text-slate-300">{{ course.published ? 'Publicado' : 'Borrador' }}</span>
         </div>
       </div>
 

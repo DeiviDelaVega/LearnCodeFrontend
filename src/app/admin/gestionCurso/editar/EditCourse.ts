@@ -23,6 +23,7 @@ export class EditCourse implements OnInit {
   courseId!: string;
   iconPreview: string | null = null;
   selectedIconFile: File | null = null;
+  originalIconUrl!: string;
 
   constructor(
     private fb: FormBuilder,
@@ -32,7 +33,7 @@ export class EditCourse implements OnInit {
     private planService: PlanService,
     private cloudinaryService: CloudinaryService,
     private cd: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.courseId = this.route.snapshot.paramMap.get('id')!;
@@ -47,43 +48,76 @@ export class EditCourse implements OnInit {
       subtitle: ['', [Validators.required, Validators.minLength(5)]],
       description: ['', [Validators.required, Validators.minLength(20)]],
       coverUrl: ['#000000', Validators.required],
-      isFree: [false],
-      requiredPlanCode: [''],
+      isFree: [true],
+      requiredPlanCode: [null, Validators.required],
       isPublished: [false]
     });
 
-    // Validación dinámica de plan requerido
     this.form.get('isFree')?.valueChanges.subscribe(isFree => {
       const planCtrl = this.form.get('requiredPlanCode');
-      if (!isFree) {
-        planCtrl?.setValidators([Validators.required]);
-      } else {
+
+      if (isFree) {
         planCtrl?.clearValidators();
-        planCtrl?.setValue('');
+        planCtrl?.setValue(null);
+      } else {
+        planCtrl?.setValidators([Validators.required]);
+        if (!planCtrl?.value) planCtrl?.setValue('');
       }
+
       planCtrl?.updateValueAndValidity();
+    });
+
+    this.form.get('requiredPlanCode')?.valueChanges.subscribe(code => {
+      if (code === 'FREE') {
+        this.form.patchValue({
+          isFree: true
+        }, { emitEvent: false });
+      } else {
+        this.form.patchValue({
+          isFree: false
+        }, { emitEvent: false });
+      }
     });
   }
 
   private loadPlans(): void {
     this.planService.getPlans().subscribe({
-      next: plans => this.plans = plans.filter(p => p.code !== 'FREE'),
+      next: (plans: Plan[]) => {
+        this.plans = plans;
+
+        if (!this.plans.some(p => p.code === 'FREE')) {
+          this.plans.unshift({
+            code: 'FREE',
+            name: 'Acceso Libre',
+            description: 'Curso de acceso gratuito',
+            price: 0,
+            durationDays: 0
+          } as Plan);
+        }
+      },
       error: () => Swal.fire('Error', 'No se pudieron cargar los planes', 'error')
     });
   }
 
   private loadCourse(): void {
     this.courseService.getById(this.courseId).subscribe({
-      next: (course) => {
-        this.form.patchValue(course);
+      next: (res) => {
+        const course = res.data;
+
+        this.form.patchValue({
+          title: course.title,
+          subtitle: course.subtitle,
+          description: course.description,
+          coverUrl: course.coverUrl,
+          isFree: course.free,
+          requiredPlanCode: course.free ? 'FREE' : course.requiredPlanCode,
+          isPublished: course.published
+        });
+
+        this.originalIconUrl = course.iconUrl;
         this.iconPreview = course.iconUrl;
 
-        // Si el curso es gratis, anulamos el plan
-        if (course.isFree) {
-          this.form.get('requiredPlanCode')?.setValue('');
-        }
-
-        this.cd.detectChanges();
+        setTimeout(() => this.cd.detectChanges());
       },
       error: () => Swal.fire('Error', 'No se pudo cargar el curso', 'error')
     });
@@ -100,6 +134,24 @@ export class EditCourse implements OnInit {
     reader.readAsDataURL(file);
   }
 
+  private prepareCourseData(): AdminCourseDto {
+    const formValues = this.form.value;
+
+    return {
+      id: this.courseId,
+      title: formValues.title,
+      subtitle: formValues.subtitle,
+      description: formValues.description,
+      iconUrl: this.originalIconUrl,
+      coverUrl: formValues.coverUrl,
+      requiredPlanCode: formValues.requiredPlanCode === 'FREE' 
+                        ? null : formValues.requiredPlanCode,
+      free: formValues.requiredPlanCode === 'FREE',
+      published: formValues.isPublished,
+      createdAt: '' as any
+    };
+  }
+
   updateCourse(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -107,21 +159,23 @@ export class EditCourse implements OnInit {
       return;
     }
 
-    const courseData: AdminCourseDto = {
-      ...this.form.value,
-      iconUrl: this.iconPreview || '', // mantener icono actual si no hay cambio
-      id: this.courseId,
-      createdAt: new Date().toISOString()
-    } as AdminCourseDto;
+    const courseData = this.prepareCourseData();
 
+          console.log("Payload enviado:", courseData);
     const save = () => {
+      console.log("VALOR:", this.form.value.isPublished);
+      console.log("TIPO:", typeof this.form.value.isPublished);
       this.courseService.update(this.courseId, courseData).subscribe({
+
         next: () => {
           Swal.fire('¡Curso actualizado!', '', 'success').then(() => {
             this.router.navigate(['/admin/gestionCurso/listado']);
           });
         },
-        error: () => Swal.fire('Error', 'No se pudo actualizar el curso', 'error')
+        error: (err) => {
+          console.error("ERROR BACKEND:", err);
+          Swal.fire('Error', err.error?.message || 'No se pudo actualizar', 'error');
+        }
       });
     };
 
@@ -141,5 +195,4 @@ export class EditCourse implements OnInit {
   volver(): void {
     this.router.navigate(['/admin/gestionCurso/listado']);
   }
-
 }

@@ -2,6 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AdminCourseDto } from '../models/AdminCourseDto';
+import { ApiResponse } from './response/ApiResponse';
+import { PageResponse } from './response/PageResponse';
 
 @Injectable({ providedIn: 'root' })
 export class AdminCourseService {
@@ -9,29 +11,28 @@ export class AdminCourseService {
   private readonly endpoint = 'http://localhost:8080/api/admin/courses';
 
   constructor(private readonly http: HttpClient) { }
-
-  getAll(): Observable<AdminCourseDto[]> {
-    return this.http.get<AdminCourseDto[]>(this.endpoint);
+  
+  getAll(): Observable<ApiResponse<AdminCourseDto[]>> {
+    return this.http.get<ApiResponse<AdminCourseDto[]>>(this.endpoint);
   }
 
-  create(course: AdminCourseDto): Observable<AdminCourseDto> {
-    return this.http.post<AdminCourseDto>(this.endpoint, course);
+  create(course: AdminCourseDto): Observable<ApiResponse<AdminCourseDto>> {
+    return this.http.post<ApiResponse<AdminCourseDto>>(this.endpoint, course);
   }
 
-  getById(id: string): Observable<AdminCourseDto> {
-    return this.http.get<AdminCourseDto>(`${this.endpoint}/${id}`);
+  getById(id: string): Observable<ApiResponse<AdminCourseDto>> {
+    return this.http.get<ApiResponse<AdminCourseDto>>(`${this.endpoint}/${id}`);
   }
 
-  update(id: string, course: AdminCourseDto): Observable<AdminCourseDto> {
-    return this.http.put<AdminCourseDto>(`${this.endpoint}/${id}`, course);
+  update(id: string, course: AdminCourseDto): Observable<ApiResponse<AdminCourseDto>> {
+    return this.http.put<ApiResponse<AdminCourseDto>>(`${this.endpoint}/${id}`, course);
   }
 
-  delete(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.endpoint}/${id}`);
+  delete(id: string): Observable<ApiResponse<AdminCourseDto>> {
+    return this.http.delete<ApiResponse<AdminCourseDto>>(`${this.endpoint}/${id}`);
   }
 
-  // En AdminCourseService.ts
-  getPaged(page: number, size: number, title?: string, published?: string): Observable<any> {
+  getPaged(page: number, size: number, title?: string, published?: string): Observable<ApiResponse<PageResponse<AdminCourseDto>>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
@@ -40,11 +41,10 @@ export class AdminCourseService {
       params = params.set('title', title);
     }
 
-    // Si es 'ALL', no enviamos el parámetro para que en Java llegue como NULL
     if (published && published !== 'ALL') {
       params = params.set('published', published);
     }
 
-    return this.http.get<any>(`${this.endpoint}/paged`, { params });
+    return this.http.get<ApiResponse<PageResponse<AdminCourseDto>>>(`${this.endpoint}/paged`,{ params });
   }
 }
