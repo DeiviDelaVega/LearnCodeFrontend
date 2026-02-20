@@ -49,11 +49,15 @@ export class ListadoSuscripcion implements OnInit {
       .set('plan', this.plan)
       .set('status', this.status);
 
-    this.http.get<any>(this.apiUrl, { params }).subscribe({
+    this.http.get<{ success: boolean, mensaje: string, data: any }>(this.apiUrl, { params }).subscribe({
       next: resp => {
-        this.suscripciones = resp.content ?? [];
-        this.totalPages = resp.totalPages ?? 0;
-        this.page = resp.number ?? 0;
+        if (resp.success) {
+          this.suscripciones = resp.data.content ?? [];
+          this.totalPages = resp.data.totalPages ?? 0;
+          this.page = resp.data.number ?? 0;
+        } else {
+          console.error('Error API:', resp.mensaje);
+        }
         this.cd.detectChanges();
       },
       error: err => {

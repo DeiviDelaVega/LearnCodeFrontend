@@ -49,12 +49,16 @@ export class EditarSuscripcion implements OnInit {
   }
 
   cargarSuscripcion() {
-    this.http.get<any>(
+    this.http.get<{ success: boolean, mensaje: string, data: any }>(
       `http://localhost:8080/api/admin/gestionSuscripcion/${this.id}`
     ).subscribe({
-      next: (data) => {
-        this.suscripcion = { ...data };
-        this.estadoOriginal = this.suscripcion.status;
+      next: (resp) => {
+        if (resp.success) {
+          this.suscripcion = { ...resp.data };
+          this.estadoOriginal = this.suscripcion.status;
+        } else {
+          this.mostrarError = true;
+        }
         this.cd.detectChanges();
       },
       error: () => this.mostrarError = true
@@ -80,7 +84,7 @@ export class EditarSuscripcion implements OnInit {
     };
 
     this.http.put(
-      `http://localhost:8080/api/admin/gestionSuscripcion`,
+      `http://localhost:8080/api/admin/gestionSuscripcion/${this.id}`,
       body
     ).subscribe({
       next: () => {
