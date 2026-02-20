@@ -46,15 +46,19 @@ export class ClientViewerComponent implements OnInit {
     this.loadData();
   }
 
-  loadData() {
+ loadData() {
     // 1. Cargar Módulos
-    this.clientService.getModules(this.courseId).subscribe(mods => {
+    this.clientService.getModules(this.courseId).subscribe((res: any) => {
       this.zone.run(() => {
-        this.modules = mods;
+        // Aseguramos que modules sea un array, extrayendo 'data' si viene envuelto
+        this.modules = res.data ? res.data : (Array.isArray(res) ? res : []);
         
         // 2. Cargar Progreso
-        this.clientService.getProgress(this.courseId).subscribe(completedIds => {
-          this.completedModuleIds = new Set(completedIds);
+        this.clientService.getProgress(this.courseId).subscribe((progressRes: any) => {
+          // Aseguramos extraer el array del progreso
+          const completedIdsArray = progressRes.data ? progressRes.data : (Array.isArray(progressRes) ? progressRes : []);
+          this.completedModuleIds = new Set(completedIdsArray);
+          
           this.calculateProgress();
           
           // Auto-seleccionar el primero o el siguiente disponible
@@ -65,6 +69,16 @@ export class ClientViewerComponent implements OnInit {
         });
       });
     });
+  }
+
+  calculateProgress() {
+    // Verificación de seguridad extra por si this.modules no es un array válido
+    if (!this.modules || !Array.isArray(this.modules) || this.modules.length === 0) {
+        this.progressPercentage = 0;
+        return;
+    }
+    const completedCount = this.modules.filter(m => this.completedModuleIds.has(m.id!)).length;
+    this.progressPercentage = Math.round((completedCount / this.modules.length) * 100);
   }
 
   selectModule(module: CourseModule) {
@@ -80,14 +94,22 @@ export class ClientViewerComponent implements OnInit {
     });
   }
 
-  loadPdf(fileId: string) {
+loadPdf(fileId: string) {
     this.isLoadingPdf = true;
     this.cd.detectChanges();
 
     this.clientService.getFileContent(fileId).subscribe({
         next: (res: any) => {
             this.zone.run(() => {
-                const url = this.base64ToBlobUrl(res.base64);
+                const base64String = res.data ? res.data.base64 : res.base64;
+                
+                if (!base64String) {
+                    console.error("No se encontró el contenido base64 en la respuesta", res);
+                    this.isLoadingPdf = false;
+                    return;
+                }
+
+                const url = this.base64ToBlobUrl(base64String);
                 this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
                 this.isLoadingPdf = false;
                 this.cd.markForCheck();
@@ -98,7 +120,6 @@ export class ClientViewerComponent implements OnInit {
         }
     });
   }
-
   markAsCompleted() {
     if (!this.currentModule?.id) return;
     
@@ -120,14 +141,7 @@ export class ClientViewerComponent implements OnInit {
     });
   }
 
-  calculateProgress() {
-    if (this.modules.length === 0) {
-        this.progressPercentage = 0;
-        return;
-    }
-    const completedCount = this.modules.filter(m => this.completedModuleIds.has(m.id!)).length;
-    this.progressPercentage = Math.round((completedCount / this.modules.length) * 100);
-  }
+
 
   private base64ToBlobUrl(base64: string): string {
     try {
