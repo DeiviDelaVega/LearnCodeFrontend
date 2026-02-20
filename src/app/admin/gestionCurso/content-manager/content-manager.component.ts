@@ -52,11 +52,12 @@ export class ContentManagerComponent implements OnInit {
     this.loadModules(true);
   }
 
-  loadModules(isInitialLoad = false) {
+ loadModules(isInitialLoad = false) {
     this.contentService.getModulesByCourse(this.courseId).subscribe({
-      next: (data: CourseModule[]) => {
+      next: (res: any) => {
         this.zone.run(() => {
-          this.modules = data;
+          this.modules = res.data ? res.data : (Array.isArray(res) ? res : []);
+          
           this.hasAnyContent = this.modules.some(m => m.files && m.files.length > 0);
 
           if (isInitialLoad && this.hasAnyContent) {
@@ -81,6 +82,35 @@ export class ContentManagerComponent implements OnInit {
     });
   }
 
+  loadPdf(fileId: string) {
+    this.isLoadingPdf = true;
+    this.cd.detectChanges();
+
+    this.contentService.getFileContent(fileId).subscribe({
+      next: (res: any) => {
+        this.zone.run(() => {
+          const base64String = res.data ? res.data.base64 : res.base64;
+          
+          if (!base64String) {
+             this.isLoadingPdf = false;
+             return;
+          }
+
+          const url = this.base64ToBlobUrl(base64String);
+          this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+          this.isLoadingPdf = false;
+          this.cd.markForCheck();
+        });
+      },
+      error: () => {
+        this.zone.run(() => {
+          this.isLoadingPdf = false;
+          Swal.fire('Error', 'No se pudo cargar el PDF', 'error');
+        });
+      }
+    });
+  }
+
   selectModule(module: CourseModule) {
     this.zone.run(() => {
       this.currentModule = module;
@@ -95,27 +125,7 @@ export class ContentManagerComponent implements OnInit {
     });
   }
 
-  loadPdf(fileId: string) {
-    this.isLoadingPdf = true;
-    this.cd.detectChanges();
 
-    this.contentService.getFileContent(fileId).subscribe({
-      next: (res: any) => {
-        this.zone.run(() => {
-          const url = this.base64ToBlobUrl(res.base64);
-          this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-          this.isLoadingPdf = false;
-          this.cd.markForCheck();
-        });
-      },
-      error: () => {
-        this.zone.run(() => {
-          this.isLoadingPdf = false;
-          Swal.fire('Error', 'No se pudo cargar el PDF', 'error');
-        });
-      }
-    });
-  }
 
   trackByFn(index: number, item: CourseModule) {
     return item.id; 
