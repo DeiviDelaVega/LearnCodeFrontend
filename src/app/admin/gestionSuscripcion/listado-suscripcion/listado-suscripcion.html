@@ -11,15 +11,17 @@
     </div>
   </div>
 
-  <div class="bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl rounded-3xl p-3 mb-8 border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none flex flex-col lg:flex-row gap-3">
-    
+  <div
+    class="bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl rounded-3xl p-3 mb-8 border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none flex flex-col lg:flex-row gap-3">
+
     <div class="flex flex-wrap md:flex-nowrap items-center gap-3 w-full">
-      
+
       <div class="relative group flex-1 min-w-[160px]">
-        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-sm font-medium pointer-events-none">
+        <span
+          class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-sm font-medium pointer-events-none">
           Plan:
         </span>
-        <select [(ngModel)]="plan" 
+        <select [(ngModel)]="plan"
           class="appearance-none w-full h-[52px] pl-16 pr-10 bg-white/50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-700 dark:text-slate-200 font-semibold text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none cursor-pointer">
           <option value="TODO">Todos</option>
           <option value="FREE">Gratis</option>
@@ -27,21 +29,24 @@
           <option value="PLATINO">Platino</option>
           <option value="DIAMANTE">Diamante</option>
         </select>
-        <span class="material-icons-round absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-lg">unfold_more</span>
+        <span
+          class="material-icons-round absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-lg">unfold_more</span>
       </div>
 
       <div class="relative group flex-1 min-w-[160px]">
-        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-sm font-medium pointer-events-none">
+        <span
+          class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-sm font-medium pointer-events-none">
           Estado:
         </span>
-        <select [(ngModel)]="status" 
+        <select [(ngModel)]="status"
           class="appearance-none w-full h-[52px] pl-20 pr-10 bg-white/50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-700 dark:text-slate-200 font-semibold text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none cursor-pointer">
           <option value="TODO">Todos</option>
           <option value="ACTIVE">Activo</option>
           <option value="CANCELED">Cancelado</option>
           <option value="EXPIRED">Expirado</option>
         </select>
-        <span class="material-icons-round absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-lg">unfold_more</span>
+        <span
+          class="material-icons-round absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-lg">unfold_more</span>
       </div>
 
       <button (click)="aplicarFiltros()"
@@ -58,7 +63,8 @@
     </div>
   </div>
 
-  <div class="bg-white dark:bg-slate-900 rounded-[2rem] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm">
+  <div
+    class="bg-white dark:bg-slate-900 rounded-[2rem] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm">
     <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse">
         <thead>
@@ -72,11 +78,13 @@
         </thead>
 
         <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
-          <tr *ngFor="let s of suscripciones" class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-            
+          <tr *ngFor="let s of suscripciones"
+            class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+
             <td class="px-8 py-5">
               <div class="flex items-center gap-4">
-                <div class="w-11 h-11 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 overflow-hidden flex-shrink-0">
+                <div
+                  class="w-11 h-11 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 overflow-hidden flex-shrink-0">
                   <img [src]="s.photo" class="w-full h-full object-cover" />
                 </div>
                 <div>
@@ -102,23 +110,24 @@
             <td class="px-8 py-5">
               <div class="flex flex-col">
                 <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                   {{ s.startAt | date:'dd MMM yyyy' }}
+                  {{ s.startAt | date:'dd MMM yyyy' }}
                 </span>
-                <span class="text-[10px] text-slate-400 uppercase font-medium">Hasta: {{ s.endAt | date:'dd/MM/yy' }}</span>
+                <span class="text-[10px] text-slate-400 uppercase font-medium">Hasta: {{ s.endAt | date:'dd/MM/yy'
+                  }}</span>
               </div>
             </td>
 
             <td class="px-8 py-5">
-  <span [ngClass]="{
+              <span [ngClass]="{
       'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400': s.status === 'ACTIVE',
       'bg-rose-500/10 text-rose-600 dark:text-rose-400': s.status === 'CANCELED',
       'bg-slate-500/10 text-slate-500 dark:text-slate-400': s.status === 'EXPIRED'
     }" class="px-3 py-1 rounded-lg text-[10px] font-black tracking-wider uppercase">
-    
-    {{ etiquetasEstado[s.status] || s.status }}
-    
-  </span>
-</td>
+
+                {{ etiquetasEstado[s.status] || s.status }}
+
+              </span>
+            </td>
 
             <td class="px-8 py-5 text-right">
               <a [routerLink]="['/admin/gestionSuscripcion/editar', s.id]"
@@ -127,13 +136,31 @@
               </a>
             </td>
           </tr>
+
+          <tr *ngIf="suscripciones.length === 0">
+            <td colspan="5" class="px-8 py-16 text-center">
+              <div class="flex flex-col items-center justify-center gap-3 text-slate-500 dark:text-slate-400">
+                <span class="material-icons-round text-5xl opacity-40">
+                  inbox
+                </span>
+                <p class="text-lg font-semibold">
+                  No se encontraron suscripciones
+                </p>
+                <p class="text-sm opacity-70">
+                  Intenta cambiar los filtros o restablecer la búsqueda
+                </p>
+              </div>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
 
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-6 px-8 py-6 border-t border-slate-200 dark:border-slate-800">
+    <div
+      class="flex flex-col sm:flex-row items-center justify-between gap-6 px-8 py-6 border-t border-slate-200 dark:border-slate-800">
       <p class="text-sm text-slate-500 dark:text-slate-400">
-        Página <span class="font-bold text-slate-800 dark:text-white">{{ page + 1 }}</span> de <span class="font-bold text-slate-800 dark:text-white">{{ totalPages }}</span>
+        Página <span class="font-bold text-slate-800 dark:text-white">{{ page + 1 }}</span> de <span
+          class="font-bold text-slate-800 dark:text-white">{{ totalPages }}</span>
       </p>
 
       <nav *ngIf="totalPages > 1" class="flex flex-wrap items-center gap-2">
@@ -141,10 +168,9 @@
           class="px-4 h-10 rounded-xl font-semibold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 hover:bg-primary hover:text-white disabled:opacity-40 transition-all">
           <span class="material-icons-round text-sm">first_page</span>
         </button>
-        
+
         <button *ngFor="let i of [].constructor(totalPages); let p = index" (click)="cambiarPagina(p)"
-          class="w-10 h-10 rounded-xl font-bold transition-all border border-slate-200 dark:border-slate-700"
-          [ngClass]="{
+          class="w-10 h-10 rounded-xl font-bold transition-all border border-slate-200 dark:border-slate-700" [ngClass]="{
             'bg-primary text-slate-900 border-primary shadow-lg shadow-primary/20': p === page,
             'bg-white/40 dark:bg-slate-900/40 text-slate-600 dark:text-slate-300': p !== page
           }">
