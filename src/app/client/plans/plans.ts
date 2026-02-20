@@ -108,38 +108,48 @@ loadAll() {
   // Stripe
   buy(planCode: string) {
 
-    Swal.fire({
-      title: 'Redirigiendo a Stripe...',
-      text: 'Procesando pago',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+  Swal.fire({
+    title: 'Redirigiendo a Stripe...',
+    text: 'Procesando pago',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    }
+  });
 
-    this.http.post<any>(
-      'http://localhost:8080/api/stripe/checkout',
-      null,
-      {
-        params: { planCode },
-        headers: {
-          Authorization:
-            'Bearer ' + localStorage.getItem('google_token')
-        }
+  this.http.post<any>(
+    'http://localhost:8080/api/stripe/checkout',
+    null,
+    {
+      params: { planCode },
+      headers: {
+        Authorization:
+          'Bearer ' + localStorage.getItem('google_token')
       }
-    )
-    .subscribe({
-      next: res => {
-        window.location.href = res.url;
-      },
-      error: () => {
+    }
+  )
+  .subscribe({
+    next: res => {
 
+      if (!res.success) {
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'No se pudo iniciar el pago'
+          text: res.message || 'Error iniciando checkout'
         });
+        return;
       }
-    });
-  }
+
+      window.location.href = res.data.url;
+    },
+    error: () => {
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo iniciar el pago'
+      });
+    }
+  });
+}
 }
