@@ -1,0 +1,57 @@
+$primary: #00a3ff;
+$bg-light: #f8fafc;
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: $bg-light;
+}
+
+.animate-fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  filter: blur(5px);
+  animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.animate-progress {
+  animation: progressMove 3s infinite linear;
+}
+
+@keyframes progressMove {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+
+spline-viewer {
+  background: transparent !important;
+  outline: none;
+}
+
+.text-transparent {
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-size: 200% auto;
+  animation: shine 8s linear infinite;
+}
+
+@keyframes shine {
+  0% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+  100% { background-position: 0% center; }
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+  &:active {
+    transform: scale(0.98);
+  }
+}
