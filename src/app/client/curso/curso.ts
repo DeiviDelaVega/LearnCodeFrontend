@@ -69,11 +69,11 @@ export class CursoComponent implements OnInit {
   private loadSubscriptionAndCourses(): void {
     this.planService.getMySubscription().subscribe({
       next: (sub) => {
-        if (sub?.status === 'ACTIVE') {
-          this.subscriptionPlanCode = sub.planCode;
+        if (sub?.data.status === 'ACTIVE') {
+          this.subscriptionPlanCode = sub.data.planCode;
           this.hasSubscription = true;
 
-          console.log("PLAN RECIBIDO:", sub.planCode);
+          console.log("PLAN RECIBIDO:", sub.data.planCode);
         } else {
           this.setFreeUser();
         }

@@ -50,11 +50,12 @@ loadAll() {
       this.plans = res.plans;
 
       // Subscripción
-      if (res.sub?.status === 'ACTIVE') {
-        this.currentPlan = res.sub.planCode;
-      } else {
-        this.currentPlan = null;
-      }
+        const sub = res.sub.data; 
+        if (sub?.status === 'ACTIVE') {
+          this.currentPlan = sub.planCode;
+        } else {
+          this.currentPlan = null;
+        }
 
       this.loading = false;
       this.cd.detectChanges();
@@ -95,7 +96,7 @@ loadAll() {
         if (res.isConfirmed) {
           this.buy(code);
         }
-        
+
       });
 
       return;

@@ -33,8 +33,8 @@ export class PaymentsHistoryComponent implements OnInit {
     this.loading = true;
 
     this.paymentService.getAllPayments().subscribe({
-      next: (data: Payment[]) => {
-        this.payments = data;
+      next: (response) => {
+        this.payments = response.data;
         this.loading = false;
       },
       error: (err: any) => {
