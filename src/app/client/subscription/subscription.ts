@@ -49,11 +49,21 @@ export class SubscriptionComponent implements OnInit {
 
     this.service.getMySubscription().subscribe({
       next: (res) => {
-        this.subscription = {
-          ...res,
-          startAt: res.startAt ? new Date(res.startAt) : null,
-          endAt: res.endAt ? new Date(res.endAt) : null,
-        };
+        if (res.success && res.data) {
+          this.subscription = {
+            ...res.data,
+            startAt: res.data.startAt ? new Date(res.data.startAt) : null,
+            endAt: res.data.endAt ? new Date(res.data.endAt) : null,
+          };
+        } else {
+          this.subscription = {
+            id: null,
+            planCode: 'FREE',
+            status: 'ACTIVE',
+            startAt: null,
+            endAt: null,
+          };
+        }
         this.loading = false;
       },
       error: (err) => {
@@ -91,25 +101,28 @@ export class SubscriptionComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.service.cancelMySubscription().subscribe({
-          next: () => {
-            Swal.fire({
-              title: 'Cancelada',
-              text: 'Tu suscripción fue cancelada correctamente.',
-              icon: 'success',
-              confirmButtonColor: '#7c3aed',
-            }).then(() => {
-              this.loadSubscription();
-
-              setTimeout(() => {
-                this.cd.detectChanges();
-              }, 0);
-
-            });
+          next: (res) => {
+            if (res.success) {
+              Swal.fire({
+                title: 'Cancelada',
+                text: res.mensaje,
+                icon: 'success',
+                confirmButtonColor: '#7c3aed',
+              }).then(() => {
+                this.loadSubscription();
+                setTimeout(() => {
+                  this.cd.detectChanges();
+                }, 0);
+              });
+            } else {
+              Swal.fire('Error', res.mensaje, 'error');
+            }
           },
           error: () => {
             Swal.fire('Error', 'No se pudo cancelar la suscripción', 'error');
           },
         });
+
       }
     });
   }
