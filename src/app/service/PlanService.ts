@@ -3,12 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Plan } from '../models/Plan';
 import { Subscription } from '../models/Subscription';
+import { ApiResponse } from '../service/response/ApiResponse';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PlanService {
-
   private API = 'http://localhost:8080/api';
 
   constructor(private http: HttpClient) {}
@@ -17,16 +17,12 @@ export class PlanService {
     return this.http.get<Plan[]>(`${this.API}/plans`);
   }
 
-  getMySubscription(): Observable<Subscription> {
-
-  return this.http.get<Subscription>(
-    `${this.API}/subscription/me`,
-    {
+  // Traer mi suscripción actual
+  getMySubscription(): Observable<ApiResponse<Subscription>> {
+    return this.http.get<ApiResponse<Subscription>>(`${this.API}/subscription/me`, {
       headers: {
-        Authorization:
-          'Bearer ' + localStorage.getItem('google_token')
-      }
-    }
-  );
-}
+        Authorization: 'Bearer ' + localStorage.getItem('google_token'),
+      },
+    });
+  }
 }
