@@ -82,7 +82,7 @@ export class CursoComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: () => {
-        console.warn('⚠️ Usuario sin suscripción → FREE');
+        console.warn('Usuario sin suscripción → FREE');
         this.setFreeUser();
         this.loadCourses();
       },
@@ -96,12 +96,13 @@ export class CursoComponent implements OnInit {
 
   private loadCourses(): void {
     this.courseService.list().subscribe({
-      next: (data) => {
-        console.log("Datos crudos del servidor:", data);
+      next: (res) => {
+        console.log("Datos crudos del servidor:", res);
 
+        const data = res.data
 
         data.forEach(c => {
-          console.log("📌 CURSO:", c.title,
+          console.log("CURSO:", c.title,
             "| isFree:", c.isFree,
             "| requiredPlanCode:", c.requiredPlanCode,
           );
@@ -119,12 +120,12 @@ export class CursoComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        console.error('❌ Error cargando cursos:', err);
+        console.error('Error cargando cursos:', err);
 
-        console.error("❌ ERROR COMPLETO:", err);
-        console.error("📌 STATUS:", err.status);
-        console.error("📌 MENSAJE:", err.message);
-        console.error("📌 ERROR BACKEND:", err.error);
+        console.error("ERROR COMPLETO:", err);
+        console.error("STATUS:", err.status);
+        console.error("MENSAJE:", err.message);
+        console.error("ERROR BACKEND:", err.error);
 
 
       },
@@ -135,7 +136,7 @@ export class CursoComponent implements OnInit {
     if (course.isFree) return true;
 
     if (!course.requiredPlanCode) {
-      console.warn("⚠️ Curso sin plan requerido:", course.title);
+      console.warn("Curso sin plan requerido:", course.title);
       return false;
     }
 
@@ -232,8 +233,8 @@ export class CursoComponent implements OnInit {
       return;
     }
 
-    console.log("✅ Acceso permitido");
-    console.log('✅ Entrar al curso:', course.title);
+    console.log("Acceso permitido");
+    console.log('Entrar al curso:', course.title);
     this.router.navigate(['/client/curso/contenido', course.id]);
   }
 
