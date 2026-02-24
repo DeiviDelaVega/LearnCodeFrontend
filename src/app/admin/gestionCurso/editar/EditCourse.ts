@@ -80,24 +80,27 @@ export class EditCourse implements OnInit {
     });
   }
 
-  private loadPlans(): void {
-    this.planService.getPlans().subscribe({
-      next: (plans: Plan[]) => {
-        this.plans = plans;
+ private loadPlans(): void {
+  this.planService.getPlans().subscribe({
+    next: (res) => {
 
-        if (!this.plans.some(p => p.code === 'FREE')) {
-          this.plans.unshift({
-            code: 'FREE',
-            name: 'Acceso Libre',
-            description: 'Curso de acceso gratuito',
-            price: 0,
-            durationDays: 0
-          } as Plan);
-        }
-      },
-      error: () => Swal.fire('Error', 'No se pudieron cargar los planes', 'error')
-    });
-  }
+      const plans = res.data;
+      this.plans = plans;
+
+      if (!this.plans.some(p => p.code === 'FREE')) {
+        this.plans.unshift({
+          code: 'FREE',
+          name: 'Acceso Libre',
+          description: 'Curso de acceso gratuito',
+          price: 0,
+          durationDays: 0
+        } as Plan);
+      }
+    },
+    error: () =>
+      Swal.fire('Error', 'No se pudieron cargar los planes', 'error')
+  });
+}
 
   private loadCourse(): void {
     this.courseService.getById(this.courseId).subscribe({
