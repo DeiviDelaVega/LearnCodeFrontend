@@ -1,8 +1,6 @@
-/* Colores principales */
 $primary: #00a3ff;
 $bg-light: #f8fafc;
 
-/* BODY */
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -11,14 +9,12 @@ body {
   animation: gradientShift 20s ease infinite;
 }
 
-/* Fondo animado para <main> */
 main {
   background: linear-gradient(135deg, #f8fafc, #e0f2ff, #ffffff);
   background-size: 600% 600%;
   animation: gradientShift 20s ease infinite;
 }
 
-/* Animación de entrada del contenido */
 .animate-fade-in {
   opacity: 0;
   transform: translateY(80px) scale(0.9);
@@ -34,7 +30,6 @@ main {
   }
 }
 
-/* Animación de barra de progreso inferior */
 .animate-progress {
   animation: progressMove 4s infinite linear;
 }
@@ -44,20 +39,17 @@ main {
   100% { transform: translateX(350%); }
 }
 
-/* Animación del gradiente de fondo */
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Spline viewer */
 spline-viewer {
   background: transparent !important;
   outline: none;
 }
 
-/* Texto con efecto degradado y brillo */
 .text-transparent {
   -webkit-background-clip: text;
   background-clip: text;
@@ -71,7 +63,6 @@ spline-viewer {
   100% { background-position: 0% center; }
 }
 
-/* Botones */
 button {
   -webkit-tap-highlight-color: transparent;
   &:active {
@@ -79,12 +70,10 @@ button {
   }
 }
 
-/* Ajustes de cards o banners con sombra y blur */
 .backdrop-blur-md {
   backdrop-filter: blur(12px);
 }
 
-/* Animación de pulso para indicadores */
 .animate-pulse {
   animation: pulse 2s infinite;
 }
@@ -94,12 +83,10 @@ button {
   50% { transform: scale(1.3); opacity: 0.5; }
 }
 
-/* Ajustes de hover para botones principales */
 a:hover {
   transition: all 0.3s ease;
 }
 
-/* Scrollbar opcional para 3D navigation si lo quieres más visible */
 ::-webkit-scrollbar {
   width: 8px;
 }
