@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PaymentService } from '../../service/PaymentService';
 import { Payment } from '../../models/payment';
@@ -19,6 +19,7 @@ export class PaymentsHistoryComponent implements OnInit {
   constructor(
     private paymentService: PaymentService,
     private router: Router,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -36,6 +37,7 @@ export class PaymentsHistoryComponent implements OnInit {
       next: (response) => {
         this.payments = response.data;
         this.loading = false;
+        this.cd.detectChanges();
       },
       error: (err: any) => {
         console.error('Error cargando pagos', err);

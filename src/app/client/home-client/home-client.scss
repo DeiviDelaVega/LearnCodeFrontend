@@ -4,31 +4,45 @@ $bg-light: #f8fafc;
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: $bg-light;
+  background: linear-gradient(135deg, #f8fafc, #e0f2ff, #ffffff);
+  background-size: 600% 600%;
+  animation: gradientShift 20s ease infinite;
+}
+
+main {
+  background: linear-gradient(135deg, #f8fafc, #e0f2ff, #ffffff);
+  background-size: 600% 600%;
+  animation: gradientShift 20s ease infinite;
 }
 
 .animate-fade-in {
   opacity: 0;
-  transform: translateY(20px);
-  filter: blur(5px);
-  animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform: translateY(80px) scale(0.9);
+  filter: blur(12px);
+  animation: reveal 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes reveal {
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     filter: blur(0);
   }
 }
 
 .animate-progress {
-  animation: progressMove 3s infinite linear;
+  animation: progressMove 4s infinite linear;
 }
 
 @keyframes progressMove {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(300%); }
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(350%); }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 spline-viewer {
@@ -40,7 +54,7 @@ spline-viewer {
   -webkit-background-clip: text;
   background-clip: text;
   background-size: 200% auto;
-  animation: shine 8s linear infinite;
+  animation: shine 10s linear infinite;
 }
 
 @keyframes shine {
@@ -54,4 +68,30 @@ button {
   &:active {
     transform: scale(0.98);
   }
+}
+
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.5; }
+}
+
+a:hover {
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: $primary;
+  border-radius: 4px;
 }

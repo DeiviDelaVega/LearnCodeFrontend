@@ -40,22 +40,18 @@
                           hover:text-primary transition">
                     Suscripciones
                 </a>
-                  <a routerLink="/admin/payments-history" routerLinkActive="active"
-   class="text-lg font-medium
+                <a routerLink="/admin/payments-history" routerLinkActive="active" class="text-lg font-medium
           text-slate-700 dark:text-slate-100
           hover:text-primary transition">
-    Historial de pagos
-</a>
+                    Historial de pagos
+                </a>
             </nav>
-
-
-
 
             <div class="flex items-center gap-3">
                 <button (click)="toggleTheme()"
                     class="p-2 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700 hover:scale-110 shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center">
-                    <span class="material-symbols-outlined" *ngIf="!isDarkMode">dark_mode</span>
-                    <span class="material-symbols-outlined" *ngIf="isDarkMode">light_mode</span>
+                    <span class="material-symbols-outlined" *ngIf="isDarkMode">dark_mode</span>
+                    <span class="material-symbols-outlined" *ngIf="!isDarkMode">light_mode</span>
                 </button>
 
                 <button type="button" (click)="toggleMobileMenu()" class="md:hidden w-10 h-10 flex items-center justify-center
@@ -135,19 +131,13 @@
                     Suscripciones
                 </a>
 
-                <a routerLink="/admin/payments-history"
-   routerLinkActive="active"
-   (click)="toggleMobileMenu()"
-   class="text-lg font-semibold
+                <a routerLink="/admin/payments-history" routerLinkActive="active" (click)="toggleMobileMenu()" class="text-lg font-semibold
           text-slate-800 dark:text-slate-100
           hover:text-primary transition">
-    Historial de pagos
-</a>
-
-
+                    Historial de pagos
+                </a>
             </nav>
         </div>
-
     </div>
 </header>
 
