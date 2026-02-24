@@ -48,7 +48,7 @@ export class InsertCourse implements OnInit {
 
     this.planService.getPlans().subscribe({
       next: plans => {
-        this.plans = plans.filter(p => p.code !== 'FREE');
+       this.plans = plans.data.filter((p: Plan) => p.code !== 'FREE');
       }
     });
 

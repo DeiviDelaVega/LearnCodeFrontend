@@ -13,9 +13,9 @@ export class PlanService {
 
   constructor(private http: HttpClient) {}
 
-  getPlans(): Observable<Plan[]> {
-    return this.http.get<Plan[]>(`${this.API}/plans`);
-  }
+  getPlans(): Observable<ApiResponse<Plan[]>> {
+  return this.http.get<ApiResponse<Plan[]>>(`${this.API}/plans`);
+}
 
   // Traer mi suscripción actual
   getMySubscription(): Observable<ApiResponse<Subscription>> {

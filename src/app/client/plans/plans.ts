@@ -47,7 +47,7 @@ loadAll() {
     next: res => {
 
       // Planes
-      this.plans = res.plans;
+      this.plans = res.plans.data;
 
       // Subscripción
         const sub = res.sub.data; 
