@@ -5,9 +5,6 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { ChangeDetectorRef } from '@angular/core';
-
-
-
 import { SubscriptionService } from '../../service/SubscriptionService';
 
 @Component({
@@ -65,6 +62,7 @@ export class SubscriptionComponent implements OnInit {
           };
         }
         this.loading = false;
+        this.cd.detectChanges();
       },
       error: (err) => {
         console.error(err);
